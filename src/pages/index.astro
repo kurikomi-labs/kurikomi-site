@@ -231,6 +231,26 @@ const canonical = "https://kurikomi.com/";
         color: var(--ink);
       }
 
+      .globe {
+        position: fixed;
+        right: 2rem;
+        bottom: 2rem;
+        pointer-events: none;
+        user-select: none;
+        display: none;
+        animation: globeFade 1.2s ease 0.7s both;
+      }
+      @media (min-width: 1100px) {
+        .globe { display: block; }
+      }
+      @keyframes globeFade {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .globe { display: none; }
+      }
+
       .reveal {
         opacity: 0;
         transform: translateY(8px);
@@ -329,5 +349,88 @@ const canonical = "https://kurikomi.com/";
         <p>&copy; 2026</p>
       </footer>
     </main>
+
+    <canvas id="globe" class="globe" aria-hidden="true" width="240" height="180"></canvas>
+
+    <script>
+      (() => {
+        const canvas = document.getElementById("globe");
+        if (!canvas || !canvas.getContext) return;
+        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        const W = 38, H = 19, R = 7.8;
+        const FONT_PX = 11;
+        const COL_W = 6.2, ROW_H = 9;
+        canvas.width = Math.ceil(W * COL_W * dpr);
+        canvas.height = Math.ceil(H * ROW_H * dpr);
+        canvas.style.width = Math.ceil(W * COL_W) + "px";
+        canvas.style.height = Math.ceil(H * ROW_H) + "px";
+
+        const ctx = canvas.getContext("2d");
+        ctx.scale(dpr, dpr);
+        ctx.font = FONT_PX + 'px ui-monospace, SFMono-Regular, Menlo, "Cascadia Mono", Consolas, monospace';
+        ctx.textBaseline = "top";
+        ctx.fillStyle = "rgba(107, 68, 35, 0.6)";
+
+        const chars = " .,:;-~+*=#&$@%";
+        const lx = 0.32, ly = 0.62, lz = -0.72;
+        let angle = 0;
+        let running = !document.hidden;
+        let lastT = 0;
+        const stepMs = 1000 / 24;
+
+        document.addEventListener("visibilitychange", () => {
+          running = !document.hidden;
+          if (running) requestAnimationFrame(frame);
+        });
+
+        function frame(t) {
+          if (!running) return;
+          if (t - lastT < stepMs) {
+            requestAnimationFrame(frame);
+            return;
+          }
+          lastT = t;
+
+          const ca = Math.cos(angle), sa = Math.sin(angle);
+          const buf = new Array(W * H).fill(" ");
+          const zb = new Float32Array(W * H);
+          for (let i = 0; i < zb.length; i++) zb[i] = -1e9;
+
+          for (let th = 0; th < Math.PI; th += 0.055) {
+            const st = Math.sin(th), ct = Math.cos(th);
+            for (let ph = 0; ph < 6.2832; ph += 0.022) {
+              const x0 = st * Math.cos(ph);
+              const z0 = st * Math.sin(ph);
+              const y0 = ct;
+              const xr = x0 * ca + z0 * sa;
+              const zr = -x0 * sa + z0 * ca;
+              const sx = (W / 2 + xr * R * 2) | 0;
+              const sy = (H / 2 - y0 * R) | 0;
+              if (sx < 0 || sx >= W || sy < 0 || sy >= H) continue;
+              const idx = sy * W + sx;
+              if (zr <= zb[idx]) continue;
+              zb[idx] = zr;
+              const dot = xr * lx + y0 * ly + zr * lz;
+              const lum = Math.max(0, dot) * 0.85 + 0.15;
+              const ci = Math.min(chars.length - 1, (lum * chars.length) | 0);
+              buf[idx] = chars[ci];
+            }
+          }
+
+          ctx.clearRect(0, 0, canvas.width / dpr, canvas.height / dpr);
+          for (let r = 0; r < H; r++) {
+            const line = buf.slice(r * W, (r + 1) * W).join("");
+            ctx.fillText(line, 0, r * ROW_H);
+          }
+
+          angle += 0.018;
+          requestAnimationFrame(frame);
+        }
+
+        requestAnimationFrame(frame);
+      })();
+    </script>
   </body>
 </html>
