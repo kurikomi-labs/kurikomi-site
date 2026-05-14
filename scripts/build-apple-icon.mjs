@@ -11,10 +11,11 @@ const inner = readFileSync(resolve(__dirname, "../public/logo.svg"), "utf8")
   .replace(/<svg[^>]*>/, "")
   .replace(/<\/svg>/, "");
 
+// Logo viewBox 153x230 — fit into 180x180 with padding. Target height 140px → scale 0.609. Width 93. Center x=43, y=20.
 const svg = `<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="180" height="180" viewBox="0 0 180 180">
   <rect width="180" height="180" rx="36" fill="#F7F3ED"/>
-  <g transform="translate(34, 34) scale(0.875)">
+  <g transform="translate(43, 20) scale(0.609)" fill="#0E0E0E">
     ${inner}
   </g>
 </svg>`;
