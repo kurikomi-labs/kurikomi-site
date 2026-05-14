@@ -144,25 +144,76 @@ const canonical = "https://kurikomi.com/";
       }
 
       .brand {
-        display: flex;
-        align-items: center;
-        gap: 0.875rem;
+        display: inline-flex;
+        align-items: flex-end;
+        gap: 0;
         margin-bottom: 5rem;
+        text-decoration: none;
+        color: var(--ink);
+        line-height: 1;
+        cursor: default;
       }
 
-      .brand img {
-        width: 24px;
-        height: 36px;
+      .brand-mark {
+        width: 20px;
+        height: 30px;
         display: block;
+        margin-bottom: -1px;
       }
 
-      .brand .wordmark {
+      .brand-tail {
         font-family: var(--serif);
         font-weight: 500;
-        font-variation-settings: "opsz" 14;
-        font-size: 1.125rem;
-        letter-spacing: -0.005em;
+        font-variation-settings: "opsz" 24;
+        font-size: 1.625rem;
+        letter-spacing: -0.022em;
+        line-height: 1;
         color: var(--ink);
+        display: inline-flex;
+        overflow: hidden;
+        max-width: 0;
+        margin-left: 0;
+        transition:
+          max-width 0.55s cubic-bezier(0.22, 0.61, 0.36, 1),
+          margin-left 0.55s cubic-bezier(0.22, 0.61, 0.36, 1);
+      }
+      .brand-tail > span {
+        display: inline-block;
+        opacity: 0;
+        transform: translateX(-5px);
+        transition:
+          opacity 0.28s ease,
+          transform 0.28s ease;
+      }
+      .brand:hover .brand-tail,
+      .brand:focus-visible .brand-tail {
+        max-width: 8em;
+        margin-left: 0.01em;
+      }
+      .brand:hover .brand-tail > span,
+      .brand:focus-visible .brand-tail > span {
+        opacity: 1;
+        transform: none;
+      }
+      .brand:hover .brand-tail > span:nth-child(1),
+      .brand:focus-visible .brand-tail > span:nth-child(1) { transition-delay: 0.04s; }
+      .brand:hover .brand-tail > span:nth-child(2),
+      .brand:focus-visible .brand-tail > span:nth-child(2) { transition-delay: 0.10s; }
+      .brand:hover .brand-tail > span:nth-child(3),
+      .brand:focus-visible .brand-tail > span:nth-child(3) { transition-delay: 0.16s; }
+      .brand:hover .brand-tail > span:nth-child(4),
+      .brand:focus-visible .brand-tail > span:nth-child(4) { transition-delay: 0.22s; }
+      .brand:hover .brand-tail > span:nth-child(5),
+      .brand:focus-visible .brand-tail > span:nth-child(5) { transition-delay: 0.28s; }
+      .brand:hover .brand-tail > span:nth-child(6),
+      .brand:focus-visible .brand-tail > span:nth-child(6) { transition-delay: 0.34s; }
+      .brand:hover .brand-tail > span:nth-child(7),
+      .brand:focus-visible .brand-tail > span:nth-child(7) { transition-delay: 0.40s; }
+      @media (prefers-reduced-motion: reduce) {
+        .brand-tail,
+        .brand-tail > span {
+          transition: none !important;
+        }
       }
 
       h1 {
@@ -285,10 +336,11 @@ const canonical = "https://kurikomi.com/";
   <body>
     <main class="page">
       <header>
-        <div class="brand reveal r-1">
-          <img src="/logo.svg" width="24" height="36" alt="" aria-hidden="true" />
-          <span class="wordmark">Kurikomi</span>
-        </div>
+        <a class="brand reveal r-1" href="/" aria-label="Kurikomi" tabindex="0">
+          <img class="brand-mark" src="/logo.svg" width="20" height="30" alt="" aria-hidden="true" />
+          <span class="brand-tail" aria-hidden="true"
+            ><span>u</span><span>r</span><span>i</span><span>k</span><span>o</span><span>m</span><span>i</span></span>
+        </a>
 
         <h1 class="reveal r-2">Kurikomi builds open-source software for developers and the people who use it.</h1>
         <p class="subhead reveal r-3">An independent software company based in Uzbekistan.</p>
