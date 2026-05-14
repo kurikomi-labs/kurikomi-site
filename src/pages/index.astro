@@ -350,7 +350,7 @@ const canonical = "https://kurikomi.com/";
       </footer>
     </main>
 
-    <canvas id="globe" class="globe" aria-hidden="true" width="240" height="180"></canvas>
+    <canvas id="globe" class="globe" aria-hidden="true"></canvas>
 
     <script>
       (() => {
@@ -358,23 +358,74 @@ const canonical = "https://kurikomi.com/";
         if (!canvas || !canvas.getContext) return;
         if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
+        // Continent bounding boxes: [latMin, latMax, lngMin, lngMax]
+        // Hand-tuned from real geography to render recognizable Earth at low res.
+        const LAND = [
+          // North America
+          [30, 72, -130, -60], [15, 30, -118, -80], [8, 18, -90, -78],
+          // South America
+          [0, 12, -82, -60], [-15, 0, -82, -38],
+          [-30, -15, -75, -42], [-55, -30, -75, -55],
+          // Greenland + Iceland
+          [60, 83, -55, -20], [63, 66, -24, -13],
+          // Europe + UK + Scandinavia
+          [36, 60, -10, 40], [50, 71, 4, 32], [50, 60, -10, 2],
+          // Asia + India + SE Asia + Japan
+          [25, 75, 40, 175], [5, 25, 65, 100],
+          [-10, 25, 95, 125], [30, 46, 128, 146],
+          // Indonesia + Philippines
+          [-10, 8, 95, 142], [5, 20, 118, 127],
+          // Africa
+          [12, 37, -17, 35], [-5, 12, -18, 50],
+          [-20, -5, 10, 42], [-35, -20, 12, 35],
+          // Madagascar
+          [-26, -12, 42, 51],
+          // Australia + NZ
+          [-40, -10, 112, 154], [-47, -34, 165, 180],
+          // Antarctica
+          [-90, -65, -180, 180],
+        ];
+
+        function isLand(lat, lng) {
+          while (lng > 180) lng -= 360;
+          while (lng < -180) lng += 360;
+          for (let i = 0; i < LAND.length; i++) {
+            const b = LAND[i];
+            if (lat >= b[0] && lat <= b[1] && lng >= b[2] && lng <= b[3]) return true;
+          }
+          return false;
+        }
+
+        // Render config
         const dpr = Math.min(window.devicePixelRatio || 1, 2);
-        const W = 38, H = 19, R = 7.8;
-        const FONT_PX = 11;
-        const COL_W = 6.2, ROW_H = 9;
-        canvas.width = Math.ceil(W * COL_W * dpr);
-        canvas.height = Math.ceil(H * ROW_H * dpr);
-        canvas.style.width = Math.ceil(W * COL_W) + "px";
-        canvas.style.height = Math.ceil(H * ROW_H) + "px";
+        const W = 40, H = 20;
+        const R = 9;
+        const X_SCALE = 1.82;
+        const FONT_PX = 12;
+        const COL_W = 7;
+        const ROW_H = 11;
+        canvas.width = (W * COL_W) * dpr;
+        canvas.height = (H * ROW_H) * dpr;
+        canvas.style.width = (W * COL_W) + "px";
+        canvas.style.height = (H * ROW_H) + "px";
 
         const ctx = canvas.getContext("2d");
         ctx.scale(dpr, dpr);
         ctx.font = FONT_PX + 'px ui-monospace, SFMono-Regular, Menlo, "Cascadia Mono", Consolas, monospace';
         ctx.textBaseline = "top";
-        ctx.fillStyle = "rgba(107, 68, 35, 0.6)";
 
-        const chars = " .,:;-~+*=#&$@%";
-        const lx = 0.32, ly = 0.62, lz = -0.72;
+        const LAND_CHARS  = ".,:;+=*#$&@%";
+        const OCEAN_CHARS = " ..";
+        const LAND_COLOR  = "rgba(107, 68, 35, 0.88)";
+        const OCEAN_COLOR = "rgba(107, 68, 35, 0.28)";
+
+        // Light: upper-right, in front of sphere (toward viewer)
+        const lx = 0.35, ly = 0.45, lz = 0.82;
+        // Earth axial tilt, ~23.5°, rotation around viewer's X (pole tips toward viewer)
+        const TILT = 0.4101;
+        const cT = Math.cos(TILT), sT = Math.sin(TILT);
+        const R2D = 180 / Math.PI;
+
         let angle = 0;
         let running = !document.hidden;
         let lastT = 0;
@@ -385,6 +436,11 @@ const canonical = "https://kurikomi.com/";
           if (running) requestAnimationFrame(frame);
         });
 
+        const N = W * H;
+        const charBuf = new Uint8Array(N);
+        const layerBuf = new Uint8Array(N); // 0 empty, 1 ocean, 2 land
+        const zb = new Float32Array(N);
+
         function frame(t) {
           if (!running) return;
           if (t - lastT < stepMs) {
@@ -394,38 +450,78 @@ const canonical = "https://kurikomi.com/";
           lastT = t;
 
           const ca = Math.cos(angle), sa = Math.sin(angle);
-          const buf = new Array(W * H).fill(" ");
-          const zb = new Float32Array(W * H);
-          for (let i = 0; i < zb.length; i++) zb[i] = -1e9;
+          charBuf.fill(0);
+          layerBuf.fill(0);
+          for (let i = 0; i < N; i++) zb[i] = -1e9;
 
-          for (let th = 0; th < Math.PI; th += 0.055) {
-            const st = Math.sin(th), ct = Math.cos(th);
-            for (let ph = 0; ph < 6.2832; ph += 0.022) {
-              const x0 = st * Math.cos(ph);
-              const z0 = st * Math.sin(ph);
-              const y0 = ct;
-              const xr = x0 * ca + z0 * sa;
-              const zr = -x0 * sa + z0 * ca;
-              const sx = (W / 2 + xr * R * 2) | 0;
-              const sy = (H / 2 - y0 * R) | 0;
+          // Sample density tuned for ~28k iter/frame, full pixel coverage at 40x20.
+          for (let th = 0; th < Math.PI; th += 0.05) {
+            const sTh = Math.sin(th), cTh = Math.cos(th);
+            const lat = 90 - th * R2D;
+            for (let ph = 0; ph < 6.2832; ph += 0.014) {
+              const lng = ph * R2D - 180;
+              const cPh = Math.cos(ph), sPh = Math.sin(ph);
+              // Local sphere point (Earth-fixed frame)
+              const xL = sTh * cPh;
+              const yL = cTh;
+              const zL = sTh * sPh;
+              // Spin around local Y (polar axis)
+              const xs = xL * ca + zL * sa;
+              const ys = yL;
+              const zs = -xL * sa + zL * ca;
+              // Tilt: rotate around viewer's X axis
+              const xv = xs;
+              const yv = ys * cT - zs * sT;
+              const zv = ys * sT + zs * cT;
+              // Orthographic projection
+              const sx = (W * 0.5 + xv * R * X_SCALE) | 0;
+              const sy = (H * 0.5 - yv * R) | 0;
               if (sx < 0 || sx >= W || sy < 0 || sy >= H) continue;
               const idx = sy * W + sx;
-              if (zr <= zb[idx]) continue;
-              zb[idx] = zr;
-              const dot = xr * lx + y0 * ly + zr * lz;
-              const lum = Math.max(0, dot) * 0.85 + 0.15;
-              const ci = Math.min(chars.length - 1, (lum * chars.length) | 0);
-              buf[idx] = chars[ci];
+              if (zv <= zb[idx]) continue;
+              zb[idx] = zv;
+              // Lighting: normal == viewer-frame position on unit sphere
+              const dot = xv * lx + yv * ly + zv * lz;
+              const lum = Math.max(0, dot) * 0.7 + 0.3;
+              if (isLand(lat, lng)) {
+                const ci = Math.min(LAND_CHARS.length - 1, Math.max(0, (lum * LAND_CHARS.length) | 0));
+                charBuf[idx] = ci;
+                layerBuf[idx] = 2;
+              } else {
+                const ci = Math.min(OCEAN_CHARS.length - 1, (lum * OCEAN_CHARS.length) | 0);
+                charBuf[idx] = ci;
+                layerBuf[idx] = 1;
+              }
             }
           }
 
-          ctx.clearRect(0, 0, canvas.width / dpr, canvas.height / dpr);
+          ctx.clearRect(0, 0, W * COL_W, H * ROW_H);
+          // Two passes: ocean first (faint), land on top (bold)
           for (let r = 0; r < H; r++) {
-            const line = buf.slice(r * W, (r + 1) * W).join("");
-            ctx.fillText(line, 0, r * ROW_H);
+            let oceanRow = "", landRow = "";
+            for (let c = 0; c < W; c++) {
+              const idx = r * W + c;
+              const layer = layerBuf[idx];
+              if (layer === 2) {
+                landRow += LAND_CHARS[charBuf[idx]];
+                oceanRow += " ";
+              } else if (layer === 1) {
+                oceanRow += OCEAN_CHARS[charBuf[idx]];
+                landRow += " ";
+              } else {
+                oceanRow += " ";
+                landRow += " ";
+              }
+            }
+            ctx.fillStyle = OCEAN_COLOR;
+            ctx.fillText(oceanRow, 0, r * ROW_H);
+            ctx.fillStyle = LAND_COLOR;
+            ctx.fillText(landRow, 0, r * ROW_H);
           }
 
-          angle += 0.018;
+          // ~30s per full revolution at 24fps
+          angle += 0.0087;
+          if (angle > 6.2832) angle -= 6.2832;
           requestAnimationFrame(frame);
         }
 
