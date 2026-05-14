@@ -18,8 +18,8 @@ const svg = `<?xml version="1.0" encoding="UTF-8"?>
     ${logoSvg}
   </g>
   <text x="120" y="380" font-family="Georgia, serif" font-size="84" font-weight="500" fill="#0E0E0E" letter-spacing="-1.5">Kurikomi</text>
-  <text x="120" y="450" font-family="Helvetica, Arial, sans-serif" font-size="32" fill="#6B6B6B">A small software company in Uzbekistan,</text>
-  <text x="120" y="492" font-family="Helvetica, Arial, sans-serif" font-size="32" fill="#6B6B6B">shipping freely and quietly.</text>
+  <text x="120" y="450" font-family="Helvetica, Arial, sans-serif" font-size="32" fill="#6B6B6B">An independent software company</text>
+  <text x="120" y="492" font-family="Helvetica, Arial, sans-serif" font-size="32" fill="#6B6B6B">based in Uzbekistan.</text>
   <rect x="120" y="552" width="64" height="2" fill="#6B4423"/>
   <text x="120" y="592" font-family="Helvetica, Arial, sans-serif" font-size="22" fill="#0E0E0E" letter-spacing="2">KURIKOMI.COM</text>
 </svg>`;
