@@ -37,11 +37,11 @@ const canonical = "https://kurikomi.com/";
     <link
       rel="preload"
       as="style"
-      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500&family=Inter:wght@400;500&display=swap"
     />
     <link
       rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500&family=Inter:wght@400;500&display=swap"
     />
 
     <style is:global>
@@ -75,6 +75,7 @@ const canonical = "https://kurikomi.com/";
         font-size: 1.0625rem;
         line-height: 1.7;
         font-feature-settings: "kern", "liga", "calt";
+        font-variant-numeric: oldstyle-nums proportional-nums;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
       }
@@ -83,13 +84,18 @@ const canonical = "https://kurikomi.com/";
         color: inherit;
         text-decoration: underline;
         text-decoration-thickness: 1px;
-        text-underline-offset: 0.18em;
+        text-underline-offset: 0.2em;
         text-decoration-color: var(--rule);
-        transition: text-decoration-color 0.15s ease, color 0.15s ease;
+        transition: text-decoration-color 0.2s ease, color 0.2s ease;
       }
       a:hover {
         color: var(--chestnut);
         text-decoration-color: var(--chestnut);
+      }
+      a:focus-visible {
+        outline: 2px solid var(--chestnut);
+        outline-offset: 3px;
+        border-radius: 2px;
       }
 
       ::selection {
@@ -110,9 +116,6 @@ const canonical = "https://kurikomi.com/";
       }
 
       header {
-        display: flex;
-        flex-direction: column;
-        gap: 2.5rem;
         margin-bottom: 6rem;
       }
 
@@ -120,18 +123,20 @@ const canonical = "https://kurikomi.com/";
         display: flex;
         align-items: center;
         gap: 0.875rem;
+        margin-bottom: 5rem;
       }
 
       .brand svg {
-        width: 28px;
-        height: 28px;
+        width: 32px;
+        height: 32px;
         display: block;
       }
 
       .brand .wordmark {
         font-family: var(--serif);
         font-weight: 500;
-        font-size: 1.0625rem;
+        font-variation-settings: "opsz" 14;
+        font-size: 1.125rem;
         letter-spacing: -0.005em;
         color: var(--ink);
       }
@@ -139,12 +144,14 @@ const canonical = "https://kurikomi.com/";
       h1 {
         font-family: var(--serif);
         font-weight: 400;
-        font-size: clamp(1.875rem, 1.3rem + 2.6vw, 2.75rem);
-        line-height: 1.18;
-        letter-spacing: -0.015em;
-        margin: 0;
+        font-variation-settings: "opsz" 96;
+        font-size: clamp(1.875rem, 1.25rem + 2.8vw, 2.875rem);
+        line-height: 1.13;
+        letter-spacing: -0.018em;
+        margin: 0 0 1.25rem;
         color: var(--ink);
         text-wrap: balance;
+        font-feature-settings: "kern", "liga", "calt", "ss01";
       }
 
       .subhead {
@@ -167,16 +174,17 @@ const canonical = "https://kurikomi.com/";
 
       .eyebrow {
         font-family: var(--sans);
-        font-size: 0.75rem;
+        font-size: 0.6875rem;
         font-weight: 500;
         text-transform: uppercase;
-        letter-spacing: 0.12em;
+        letter-spacing: 0.16em;
         color: var(--muted);
-        margin: 0 0 1.75rem;
+        margin: 0 0 2rem;
       }
 
       p {
         margin: 0 0 1.4em;
+        text-wrap: pretty;
       }
 
       p:last-child {
@@ -188,7 +196,7 @@ const canonical = "https://kurikomi.com/";
         padding-top: 2rem;
         font-size: 0.9375rem;
         color: var(--muted);
-        line-height: 1.7;
+        line-height: 1.75;
       }
 
       footer p {
@@ -199,7 +207,31 @@ const canonical = "https://kurikomi.com/";
         color: var(--ink);
       }
 
+      .reveal {
+        opacity: 0;
+        transform: translateY(8px);
+        animation: reveal 0.7s cubic-bezier(0.2, 0.6, 0.2, 1) forwards;
+      }
+      .r-1 { animation-delay: 0.05s; }
+      .r-2 { animation-delay: 0.18s; }
+      .r-3 { animation-delay: 0.28s; }
+      .r-4 { animation-delay: 0.38s; }
+      .r-5 { animation-delay: 0.48s; }
+      .r-6 { animation-delay: 0.58s; }
+
+      @keyframes reveal {
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+
       @media (prefers-reduced-motion: reduce) {
+        .reveal {
+          opacity: 1;
+          transform: none;
+          animation: none;
+        }
         * {
           transition: none !important;
         }
@@ -209,7 +241,7 @@ const canonical = "https://kurikomi.com/";
   <body>
     <main class="page">
       <header>
-        <div class="brand">
+        <div class="brand reveal r-1">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" aria-hidden="true" focusable="false">
             <path
               fill="#0E0E0E"
@@ -219,11 +251,11 @@ const canonical = "https://kurikomi.com/";
           <span class="wordmark">Kurikomi</span>
         </div>
 
-        <h1>Kurikomi builds open-source tools for developers and the people who use them.</h1>
-        <p class="subhead">A small software company in Uzbekistan, shipping freely and quietly.</p>
+        <h1 class="reveal r-2">Kurikomi builds open-source tools for developers and the people who use them.</h1>
+        <p class="subhead reveal r-3">A small software company in Uzbekistan, shipping freely and quietly.</p>
       </header>
 
-      <section aria-labelledby="what">
+      <section aria-labelledby="what" class="reveal r-4">
         <p id="what" class="eyebrow">What we make</p>
         <p>
           We make <a href="https://github-store.org">GitHub Store</a> — a cross-platform
@@ -243,7 +275,7 @@ const canonical = "https://kurikomi.com/";
         </p>
       </section>
 
-      <section aria-labelledby="why">
+      <section aria-labelledby="why" class="reveal r-5">
         <p id="why" class="eyebrow">Why we exist</p>
         <p>
           The web is full of tools designed to grow rapidly, charge what the market
@@ -262,7 +294,7 @@ const canonical = "https://kurikomi.com/";
         </p>
       </section>
 
-      <section aria-labelledby="where">
+      <section aria-labelledby="where" class="reveal r-6">
         <p id="where" class="eyebrow">Where we are</p>
         <p>
           Kurikomi was founded in 2026 in Bukhara, Uzbekistan. The team is one
@@ -275,7 +307,7 @@ const canonical = "https://kurikomi.com/";
         </p>
       </section>
 
-      <footer>
+      <footer class="reveal r-6">
         <p>Kurikomi, Inc. &middot; Made in Uzbekistan</p>
         <p>
           <a href="https://github.com/kurikomi-labs">GitHub</a>
