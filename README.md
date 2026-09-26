@@ -2,7 +2,7 @@
 
 Source for [kurikomi.com](https://kurikomi.com).
 
-Astro, vanilla CSS, no JavaScript at runtime. Deployed on Cloudflare Pages.
+Astro, vanilla CSS, and a small vanilla-JS orrery on the landing page. Deployed on Cloudflare Pages.
 
 ## Develop
 
