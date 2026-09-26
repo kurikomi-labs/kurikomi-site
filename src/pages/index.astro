@@ -1,7 +1,7 @@
 ---
 const title = "Kurikomi";
 const description =
-  "An independent software company based in Uzbekistan. Maker of GitHub Store, komi-learn, RikkaUI, and RikkaIcons.";
+  "An independent software company in Bukhara, Uzbekistan. Maker of Hoaka OS.";
 const canonical = "https://kurikomi.com/";
 ---
 
@@ -10,11 +10,11 @@ const canonical = "https://kurikomi.com/";
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{title} — open-source tools, made in Uzbekistan</title>
+    <title>{title} — one system, twelve orbits</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
-    <meta name="theme-color" content="#F7F3ED" />
-    <meta name="color-scheme" content="light" />
+    <meta name="theme-color" content="#0a0908" />
+    <meta name="color-scheme" content="dark" />
 
     <meta property="og:type" content="website" />
     <meta property="og:title" content={title} />
@@ -70,14 +70,20 @@ const canonical = "https://kurikomi.com/";
       }
 
       :root {
-        --cream: #f7f3ed;
-        --ink: #0e0e0e;
-        --chestnut: #6b4423;
-        --muted: #6b6b6b;
-        --rule: rgba(14, 14, 14, 0.1);
+        color-scheme: dark;
+        --void: #080706;
+        --deep: #12100d;
+        --bone: #e9e3d8;
+        --ash: #8b8379;
+        --dim: #5b554e;
+        --brass: #cf9a52;
+        --brass-hi: #f2cd91;
+        --rule: rgba(233, 227, 216, 0.11);
         --serif: "Fraunces", Georgia, "Times New Roman", serif;
         --sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui,
           sans-serif;
+        --mono: ui-monospace, SFMono-Regular, Menlo, "Cascadia Mono", Consolas,
+          monospace;
       }
 
       *,
@@ -93,15 +99,15 @@ const canonical = "https://kurikomi.com/";
 
       body {
         margin: 0;
-        background: var(--cream);
-        color: var(--ink);
+        background: var(--void);
+        color: var(--bone);
         font-family: var(--sans);
         font-size: 1.0625rem;
         line-height: 1.7;
         font-feature-settings: "kern", "liga", "calt";
-        font-variant-numeric: oldstyle-nums proportional-nums;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
+        overflow-x: hidden;
       }
 
       a {
@@ -113,193 +119,472 @@ const canonical = "https://kurikomi.com/";
         transition: text-decoration-color 0.2s ease, color 0.2s ease;
       }
       a:hover {
-        color: var(--chestnut);
-        text-decoration-color: var(--chestnut);
+        color: var(--brass-hi);
+        text-decoration-color: var(--brass);
       }
       a:focus-visible {
-        outline: 2px solid var(--chestnut);
+        outline: 2px solid var(--brass);
         outline-offset: 3px;
         border-radius: 2px;
       }
 
       ::selection {
-        background: var(--ink);
-        color: var(--cream);
+        background: var(--brass);
+        color: var(--void);
       }
 
-      .page {
-        max-width: 38rem;
-        margin: 0 auto;
-        padding: 4rem 1.5rem 6rem;
+      .label {
+        font-family: var(--sans);
+        font-size: 0.6875rem;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.16em;
+        color: var(--ash);
+        margin: 0;
       }
 
-      @media (min-width: 768px) {
-        .page {
-          padding: 6rem 2rem 8rem;
+      /* ── Orrery stage ─────────────────────────────────────────── */
+
+      .stage {
+        position: relative;
+        width: 100%;
+        height: 100vh;
+        height: 100svh;
+        min-height: 28rem;
+        overflow: hidden;
+        background:
+          radial-gradient(
+            120% 88% at 50% 46%,
+            var(--deep) 0%,
+            #0b0a08 46%,
+            var(--void) 100%
+          );
+        border-bottom: 1px solid var(--rule);
+      }
+
+      #stars,
+      #rings {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        display: block;
+        pointer-events: none;
+      }
+
+      #stars {
+        opacity: 0;
+        animation: fadeIn 1.6s ease 0.2s forwards;
+      }
+      #rings {
+        opacity: 0;
+        animation: fadeIn 1.4s ease 0.45s forwards;
+        overflow: visible;
+      }
+
+      @keyframes fadeIn {
+        to {
+          opacity: 1;
         }
       }
 
-      header {
-        margin-bottom: 6rem;
+      .sun {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        width: 92px;
+        height: 92px;
+        display: grid;
+        place-items: center;
+        pointer-events: none;
+        opacity: 0;
+        animation: sunIn 1.1s cubic-bezier(0.2, 0.6, 0.2, 1) 0.15s forwards;
+      }
+
+      @keyframes sunIn {
+        from {
+          opacity: 0;
+          transform: translate(-50%, -50%) scale(0.86);
+        }
+        to {
+          opacity: 1;
+          transform: translate(-50%, -50%) scale(1);
+        }
+      }
+
+      .sun::before {
+        content: "";
+        position: absolute;
+        inset: -58%;
+        border-radius: 50%;
+        background: radial-gradient(
+          circle,
+          rgba(207, 154, 82, 0.3) 0%,
+          rgba(207, 154, 82, 0.11) 38%,
+          rgba(207, 154, 82, 0) 68%
+        );
+      }
+
+      .sun img {
+        position: relative;
+        width: 27px;
+        height: 40px;
+        display: block;
+        filter: brightness(0) saturate(100%) invert(80%) sepia(28%)
+          saturate(1040%) hue-rotate(340deg) brightness(97%) contrast(92%);
+      }
+
+      /* ── Bodies ───────────────────────────────────────────────── */
+
+      #bodies {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+      }
+
+      .body {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 0;
+        height: 0;
+        pointer-events: none;
+        will-change: transform;
+      }
+
+      .orb {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        pointer-events: auto;
+        cursor: default;
+        background: var(--orb, #6f665b);
+        box-shadow: inset 0 0 0 0.5px rgba(233, 227, 216, 0.14);
+      }
+
+      .night {
+        position: absolute;
+        inset: 0;
+        border-radius: 50%;
+        overflow: hidden;
+        will-change: transform;
+      }
+      .night::after {
+        content: "";
+        position: absolute;
+        inset: -1px;
+        border-radius: 50%;
+        background: linear-gradient(
+          to right,
+          rgba(4, 4, 3, 0) 26%,
+          rgba(4, 4, 3, 0.62) 58%,
+          rgba(4, 4, 3, 0.88) 100%
+        );
+      }
+
+      .body.live .orb {
+        cursor: pointer;
+        background: radial-gradient(
+          circle at 34% 30%,
+          var(--brass-hi) 0%,
+          var(--brass) 46%,
+          #8a5f2c 100%
+        );
+        box-shadow:
+          inset 0 0 0 0.5px rgba(242, 205, 145, 0.55),
+          0 0 14px 2px rgba(207, 154, 82, 0.34),
+          0 0 34px 8px rgba(207, 154, 82, 0.15);
+      }
+
+      .body.live .night::after {
+        background: linear-gradient(
+          to right,
+          rgba(4, 4, 3, 0) 34%,
+          rgba(4, 4, 3, 0.4) 68%,
+          rgba(4, 4, 3, 0.7) 100%
+        );
+      }
+
+      .tag {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(1.35rem, -50%);
+        white-space: nowrap;
+        font-size: 0.6875rem;
+        font-weight: 500;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        color: var(--brass-hi);
+        line-height: 1;
+        padding: 0.3rem 0 0.3rem 0.65rem;
+        border-left: 1px solid rgba(207, 154, 82, 0.4);
+        pointer-events: none;
+        text-shadow: 0 0 10px rgba(8, 7, 6, 0.9);
+      }
+
+      .body.flip .tag {
+        transform: translate(-100%, -50%) translateX(-1.35rem);
+        padding: 0.3rem 0.65rem 0.3rem 0;
+        border-left: none;
+        border-right: 1px solid rgba(207, 154, 82, 0.4);
+      }
+
+      .body.live a {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: 2.75rem;
+        height: 2.75rem;
+        -webkit-tap-highlight-color: transparent;
+        transform: translate(-50%, -50%);
+        border-radius: 50%;
+        pointer-events: auto;
+        text-decoration: none;
+      }
+      .body.live a:focus-visible {
+        outline: 1px solid var(--brass);
+        outline-offset: 4px;
+      }
+
+      /* ── Masthead ─────────────────────────────────────────────── */
+
+      .masthead {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        padding: 2rem 1.5rem;
+        pointer-events: none;
       }
 
       .brand {
         display: inline-flex;
         align-items: flex-end;
-        gap: 0;
-        margin-bottom: 5rem;
         text-decoration: none;
-        color: var(--ink);
+        color: var(--bone);
         line-height: 1;
         cursor: default;
+        pointer-events: auto;
       }
 
       .brand-mark {
-        width: 20px;
-        height: 30px;
+        width: 17px;
+        height: 26px;
         display: block;
         margin-bottom: -1px;
+        filter: brightness(0) saturate(100%) invert(93%) sepia(9%) saturate(300%)
+          hue-rotate(345deg) brightness(97%) contrast(90%);
       }
 
       .brand-tail {
         font-family: var(--serif);
         font-weight: 500;
         font-variation-settings: "opsz" 24;
-        font-size: 1.625rem;
+        font-size: 1.4rem;
         letter-spacing: -0.022em;
         line-height: 1;
-        color: var(--ink);
+        color: var(--bone);
         display: inline-flex;
         overflow: hidden;
         max-width: 0;
-        margin-left: 0;
-        transition:
-          max-width 0.55s cubic-bezier(0.22, 0.61, 0.36, 1),
-          margin-left 0.55s cubic-bezier(0.22, 0.61, 0.36, 1);
+        transition: max-width 0.55s cubic-bezier(0.22, 0.61, 0.36, 1);
       }
       .brand-tail > span {
         display: inline-block;
         opacity: 0;
         transform: translateX(-5px);
-        transition:
-          opacity 0.28s ease,
-          transform 0.28s ease;
+        transition: opacity 0.28s ease, transform 0.28s ease;
       }
       .brand:hover .brand-tail,
       .brand:focus-visible .brand-tail {
         max-width: 8em;
-        margin-left: 0.01em;
       }
       .brand:hover .brand-tail > span,
       .brand:focus-visible .brand-tail > span {
         opacity: 1;
         transform: none;
       }
-      .brand:hover .brand-tail > span:nth-child(1),
-      .brand:focus-visible .brand-tail > span:nth-child(1) { transition-delay: 0.04s; }
-      .brand:hover .brand-tail > span:nth-child(2),
-      .brand:focus-visible .brand-tail > span:nth-child(2) { transition-delay: 0.10s; }
-      .brand:hover .brand-tail > span:nth-child(3),
-      .brand:focus-visible .brand-tail > span:nth-child(3) { transition-delay: 0.16s; }
-      .brand:hover .brand-tail > span:nth-child(4),
-      .brand:focus-visible .brand-tail > span:nth-child(4) { transition-delay: 0.22s; }
-      .brand:hover .brand-tail > span:nth-child(5),
-      .brand:focus-visible .brand-tail > span:nth-child(5) { transition-delay: 0.28s; }
-      .brand:hover .brand-tail > span:nth-child(6),
-      .brand:focus-visible .brand-tail > span:nth-child(6) { transition-delay: 0.34s; }
-      .brand:hover .brand-tail > span:nth-child(7),
-      .brand:focus-visible .brand-tail > span:nth-child(7) { transition-delay: 0.40s; }
-      @media (prefers-reduced-motion: reduce) {
-        .brand-tail,
-        .brand-tail > span {
-          transition: none !important;
-        }
+      .brand:hover .brand-tail > span:nth-child(1) { transition-delay: 0.04s; }
+      .brand:hover .brand-tail > span:nth-child(2) { transition-delay: 0.10s; }
+      .brand:hover .brand-tail > span:nth-child(3) { transition-delay: 0.16s; }
+      .brand:hover .brand-tail > span:nth-child(4) { transition-delay: 0.22s; }
+      .brand:hover .brand-tail > span:nth-child(5) { transition-delay: 0.28s; }
+      .brand:hover .brand-tail > span:nth-child(6) { transition-delay: 0.34s; }
+      .brand:hover .brand-tail > span:nth-child(7) { transition-delay: 0.40s; }
+
+      /* ── Hero copy ────────────────────────────────────────────── */
+
+      .thesis {
+        position: absolute;
+        left: 1.5rem;
+        bottom: 5.25rem;
+        max-width: 22rem;
+        pointer-events: none;
       }
 
-      h1 {
+      .thesis h1 {
         font-family: var(--serif);
         font-weight: 400;
         font-variation-settings: "opsz" 96;
-        font-size: clamp(1.875rem, 1.25rem + 2.8vw, 2.875rem);
-        line-height: 1.13;
+        font-size: clamp(1.75rem, 1.2rem + 2.3vw, 2.5rem);
+        line-height: 1.14;
         letter-spacing: -0.018em;
-        margin: 0 0 1.25rem;
-        color: var(--ink);
+        margin: 0 0 0.75rem;
+        color: var(--bone);
         text-wrap: balance;
         font-feature-settings: "kern", "liga", "calt", "ss01";
       }
 
-      .subhead {
-        font-family: var(--sans);
-        font-size: 1.0625rem;
+      .thesis p {
+        font-size: 0.9375rem;
         line-height: 1.6;
-        color: var(--muted);
+        color: var(--ash);
         margin: 0;
-        max-width: 32rem;
-        text-wrap: balance;
+        text-wrap: pretty;
+      }
+
+      /* ── Readout plaque ───────────────────────────────────────── */
+
+      .readout {
+        position: absolute;
+        right: 1.5rem;
+        bottom: 5.25rem;
+        width: 15.5rem;
+        padding-top: 0.75rem;
+        border-top: 1px solid var(--rule);
+        pointer-events: none;
+        font-variant-numeric: tabular-nums;
+      }
+
+      .readout-name {
+        font-family: var(--sans);
+        font-size: 0.8125rem;
+        font-weight: 500;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--bone);
+        margin: 0 0 0.5rem;
+        min-height: 1.2em;
+      }
+      .readout[data-live="true"] .readout-name {
+        color: var(--brass-hi);
+      }
+
+      .readout dl {
+        margin: 0;
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 0.2rem 1rem;
+        font-family: var(--mono);
+        font-size: 0.6875rem;
+        letter-spacing: 0.02em;
+        line-height: 1.6;
+      }
+      .readout dt {
+        color: var(--dim);
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+      }
+      .readout dd {
+        margin: 0;
+        color: var(--ash);
+        text-align: right;
+      }
+      .readout[data-live="true"] dd.state {
+        color: var(--brass);
+      }
+
+      .cue {
+        position: absolute;
+        left: 1.5rem;
+        bottom: 2rem;
+        color: var(--dim);
+        pointer-events: none;
+      }
+
+      @media (min-width: 900px) {
+        .masthead { padding: 2.5rem 3rem; }
+        .thesis { left: 3rem; bottom: 6rem; }
+        .readout { right: 3rem; bottom: 6rem; }
+        .cue { left: 3rem; bottom: 2.5rem; }
+      }
+
+      @media (max-width: 640px) {
+        .thesis {
+          bottom: auto;
+          top: 5.5rem;
+          right: 1.5rem;
+          max-width: none;
+        }
+        .readout {
+          width: auto;
+          left: 1.5rem;
+          right: 1.5rem;
+          bottom: 4.5rem;
+        }
+        .tag { display: none; }
+        .sun { width: 64px; height: 64px; }
+        .sun img { width: 19px; height: 28px; }
+        .cue { display: none; }
+      }
+
+      @media (max-height: 480px) {
+        .tag { display: none; }
+        .thesis { bottom: 3.5rem; }
+        .readout { bottom: 3.5rem; }
+        .cue { display: none; }
+      }
+
+      /* ── Editorial ────────────────────────────────────────────── */
+
+      .page {
+        max-width: 38rem;
+        margin: 0 auto;
+        padding: 6rem 1.5rem 6rem;
+      }
+
+      @media (min-width: 768px) {
+        .page {
+          padding: 8rem 2rem 8rem;
+        }
       }
 
       section {
         margin-bottom: 5rem;
       }
 
-      section:last-of-type {
-        margin-bottom: 4rem;
-      }
-
-      .eyebrow {
-        font-family: var(--sans);
-        font-size: 0.6875rem;
-        font-weight: 500;
-        text-transform: uppercase;
-        letter-spacing: 0.16em;
-        color: var(--muted);
-        margin: 0 0 2rem;
+      section .label {
+        margin-bottom: 2rem;
       }
 
       p {
         margin: 0 0 1.4em;
         text-wrap: pretty;
       }
-
       p:last-child {
         margin-bottom: 0;
+      }
+
+      section p:not(.label) {
+        color: #cfc8bc;
       }
 
       footer {
         border-top: 1px solid var(--rule);
         padding-top: 2rem;
         font-size: 0.9375rem;
-        color: var(--muted);
+        color: var(--ash);
         line-height: 1.75;
       }
-
       footer p {
         margin: 0;
       }
-
       footer a {
-        color: var(--ink);
-      }
-
-      .globe {
-        position: fixed;
-        right: 2rem;
-        bottom: 2rem;
-        pointer-events: none;
-        user-select: none;
-        display: none;
-        animation: globeFade 1.2s ease 0.7s both;
-      }
-      @media (min-width: 1100px) {
-        .globe { display: block; }
-      }
-      @keyframes globeFade {
-        from { opacity: 0; }
-        to { opacity: 1; }
-      }
-      @media (prefers-reduced-motion: reduce) {
-        .globe { display: none; }
+        color: var(--bone);
       }
 
       .reveal {
@@ -308,11 +593,9 @@ const canonical = "https://kurikomi.com/";
         animation: reveal 0.7s cubic-bezier(0.2, 0.6, 0.2, 1) forwards;
       }
       .r-1 { animation-delay: 0.05s; }
-      .r-2 { animation-delay: 0.18s; }
-      .r-3 { animation-delay: 0.28s; }
-      .r-4 { animation-delay: 0.38s; }
-      .r-5 { animation-delay: 0.48s; }
-      .r-6 { animation-delay: 0.58s; }
+      .r-2 { animation-delay: 0.55s; }
+      .r-3 { animation-delay: 0.68s; }
+      .r-4 { animation-delay: 0.8s; }
 
       @keyframes reveal {
         to {
@@ -322,73 +605,98 @@ const canonical = "https://kurikomi.com/";
       }
 
       @media (prefers-reduced-motion: reduce) {
-        .reveal {
+        .reveal,
+        #stars,
+        #rings,
+        .sun {
           opacity: 1;
           transform: none;
           animation: none;
         }
-        * {
+        .sun {
+          transform: translate(-50%, -50%);
+        }
+        *,
+        *::before,
+        *::after {
           transition: none !important;
         }
       }
     </style>
   </head>
   <body>
-    <main class="page">
-      <header>
+    <div class="stage" id="stage">
+      <canvas id="stars" aria-hidden="true"></canvas>
+      <svg id="rings" aria-hidden="true"></svg>
+
+      <div class="sun">
+        <img src="/logo.svg" width="27" height="40" alt="" aria-hidden="true" />
+      </div>
+
+      <div id="bodies"></div>
+
+      <div class="masthead">
         <a class="brand reveal r-1" href="/" aria-label="Kurikomi" tabindex="0">
-          <img class="brand-mark" src="/logo.svg" width="20" height="30" alt="" aria-hidden="true" />
+          <img class="brand-mark" src="/logo.svg" width="17" height="26" alt="" aria-hidden="true" />
           <span class="brand-tail" aria-hidden="true"
             ><span>u</span><span>r</span><span>i</span><span>k</span><span>o</span><span>m</span><span>i</span></span>
         </a>
+      </div>
 
-        <h1 class="reveal r-2">We solve everyday problems.</h1>
-        <p class="subhead reveal r-3">An independent software company based in Uzbekistan.</p>
-      </header>
+      <div class="thesis reveal r-2">
+        <h1>We build one thing at a time.</h1>
+        <p>
+          An independent software company in Bukhara, Uzbekistan. One orbit is
+          occupied. Eleven are not.
+        </p>
+      </div>
 
-      <section aria-labelledby="what" class="reveal r-4">
-        <p id="what" class="eyebrow">What we make</p>
-        <p>Kurikomi makes four products today.</p>
+      <div class="readout reveal r-3" id="readout" data-live="true" aria-hidden="true">
+        <p class="readout-name" id="ro-name">Hoaka OS</p>
+        <dl>
+          <dt>Orbit</dt><dd id="ro-orbit">VI</dd>
+          <dt>Period</dt><dd id="ro-period">—</dd>
+          <dt>State</dt><dd class="state" id="ro-state">Shipping</dd>
+        </dl>
+      </div>
+
+      <p class="label cue reveal r-4">Scroll</p>
+    </div>
+
+    <main class="page">
+      <section aria-labelledby="orbit">
+        <p id="orbit" class="label">In orbit</p>
         <p>
-          <a href="https://github-store.org">GitHub Store</a> is a cross-platform app
-          store for GitHub, Codeberg, and Forgejo releases. It runs on Android,
-          Windows, macOS, and Linux. 14,000+ stars on GitHub. Active users in 166
-          countries.
+          <a href="https://hoakaos.com">Hoaka OS</a> is an operating system for
+          university computer labs. Every machine boots from the same clean
+          system, opens only what the university allows, locks to a single page
+          for exams, and wipes itself when the student logs out.
         </p>
         <p>
-          <a href="https://github.com/kurikomi-labs/komi-learn">komi-learn</a> is
-          continuous memory for AI coding agents. It learns how you work and recalls
-          it automatically, with no commands. Works with Claude Code and Codex.
-        </p>
-        <p>
-          <a href="https://rikkaui.dev">RikkaUI</a> is a component library for Jetpack
-          Compose and Compose Multiplatform, built on the shadcn philosophy of code
-          you own. No external dependency, no breaking updates, no lock-in.
-        </p>
-        <p>
-          <a href="https://rikkaicons.dev">RikkaIcons</a> is a multi-style icon library
-          for Android and Kotlin Multiplatform — the first of its kind in the ecosystem.
+          It replaces four separate products that cost $241.66 per machine in
+          the first year. Hoaka is $15 per machine, every year.
         </p>
       </section>
 
-      <section aria-labelledby="approach" class="reveal r-5">
-        <p id="approach" class="eyebrow">Our approach</p>
+      <section aria-labelledby="approach">
+        <p id="approach" class="label">How we work</p>
         <p>
-          We do not track you. We do not sell your data. We do not show ads. Our
-          client apps are open source so you can read what they do before you run
-          them.
+          We do not track you. We do not sell your data. We do not show ads.
+          Hoaka keeps its server inside the building it serves — nothing leaves
+          for a cloud we own.
         </p>
         <p>
-          We work in public, ship frequently, and plan for the long term over the
-          hype cycle.
+          We work in public, ship frequently, and plan for the long term over
+          the hype cycle. One product at a time, finished before the next one
+          starts.
         </p>
       </section>
 
-      <section aria-labelledby="company" class="reveal r-6">
-        <p id="company" class="eyebrow">The company</p>
+      <section aria-labelledby="company">
+        <p id="company" class="label">The company</p>
         <p>
           Kurikomi, Inc. was founded in 2026 and is headquartered in Bukhara,
-          Uzbekistan. We work openly and ship frequently.
+          Uzbekistan.
         </p>
         <p>
           For partnerships, integrations, or press:
@@ -396,7 +704,7 @@ const canonical = "https://kurikomi.com/";
         </p>
       </section>
 
-      <footer class="reveal r-6">
+      <footer>
         <p>Kurikomi, Inc. &middot; Founded 2026 &middot; Made in Uzbekistan</p>
         <p>
           <a href="https://github.com/kurikomi-labs">GitHub</a>
@@ -407,182 +715,295 @@ const canonical = "https://kurikomi.com/";
       </footer>
     </main>
 
-    <canvas id="globe" class="globe" aria-hidden="true"></canvas>
-
     <script>
       (() => {
-        const canvas = document.getElementById("globe");
-        if (!canvas || !canvas.getContext) return;
-        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+        const stage = document.getElementById("stage");
+        const starsCanvas = document.getElementById("stars");
+        const ringsSvg = document.getElementById("rings");
+        const bodiesLayer = document.getElementById("bodies");
+        const readout = document.getElementById("readout");
+        const roName = document.getElementById("ro-name");
+        const roOrbit = document.getElementById("ro-orbit");
+        const roPeriod = document.getElementById("ro-period");
+        const roState = document.getElementById("ro-state");
+        if (!stage || !bodiesLayer || !ringsSvg || !starsCanvas) return;
 
-        // Continent bounding boxes: [latMin, latMax, lngMin, lngMax]
-        // Hand-tuned from real geography to render recognizable Earth at low res.
-        const LAND = [
-          // North America
-          [30, 72, -130, -60], [15, 30, -118, -80], [8, 18, -90, -78],
-          // South America
-          [0, 12, -82, -60], [-15, 0, -82, -38],
-          [-30, -15, -75, -42], [-55, -30, -75, -55],
-          // Greenland + Iceland
-          [60, 83, -55, -20], [63, 66, -24, -13],
-          // Europe + UK + Scandinavia
-          [36, 60, -10, 40], [50, 71, 4, 32], [50, 60, -10, 2],
-          // Asia + India + SE Asia + Japan
-          [25, 75, 40, 175], [5, 25, 65, 100],
-          [-10, 25, 95, 125], [30, 46, 128, 146],
-          // Indonesia + Philippines
-          [-10, 8, 95, 142], [5, 20, 118, 127],
-          // Africa
-          [12, 37, -17, 35], [-5, 12, -18, 50],
-          [-20, -5, 10, 42], [-35, -20, 12, 35],
-          // Madagascar
-          [-26, -12, 42, 51],
-          // Australia + NZ
-          [-40, -10, 112, 154], [-47, -34, 165, 180],
-          // Antarctica
-          [-90, -65, -180, 180],
+        const SVG_NS = "http://www.w3.org/2000/svg";
+        const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+        // Viewing angle measured from the pole. Narrow screens get a
+        // shallower angle so the inner orbits keep vertical separation.
+        let TAGS_ON = true;
+        let SQUASH = Math.cos((70 * Math.PI) / 180);
+        let DEPTH = Math.sin((70 * Math.PI) / 180);
+        // One second of wall clock is 1/26 of the innermost body's year.
+        const YEARS_PER_SEC = 1 / 26;
+        const ROMAN = ["I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII"];
+
+        // a — semi-major axis in arbitrary units; period follows Kepler's third
+        // law (T = a^1.5) rather than being authored, so the inner bodies
+        // genuinely outrun the outer ones. e/omega/M0 fix the ellipse.
+        const BODIES = [
+          { a: 1.00, e: 0.062, omega: 0.42, m0: 1.9, size: 5.0, tint: "#6f665b" },
+          { a: 1.46, e: 0.031, omega: 2.61, m0: 4.4, size: 6.4, tint: "#7b7165" },
+          { a: 1.96, e: 0.094, omega: 5.02, m0: 0.6, size: 5.6, tint: "#655d53" },
+          { a: 2.50, e: 0.048, omega: 1.18, m0: 3.2, size: 7.2, tint: "#847a6d" },
+          { a: 3.08, e: 0.115, omega: 3.77, m0: 5.6, size: 4.6, tint: "#5e574e" },
+          { a: 3.70, e: 0.029, omega: 0.88, m0: 2.3, size: 11.5, live: true,
+            name: "Hoaka OS", href: "https://hoakaos.com", state: "Shipping" },
+          { a: 4.36, e: 0.071, omega: 4.33, m0: 5.1, size: 6.0, tint: "#726a5f" },
+          { a: 5.06, e: 0.038, omega: 2.05, m0: 0.9, size: 8.2, tint: "#8a8072" },
+          { a: 5.80, e: 0.102, omega: 5.61, m0: 3.9, size: 5.2, tint: "#615a51" },
+          { a: 6.58, e: 0.055, omega: 1.54, m0: 2.7, size: 6.8, tint: "#776d62" },
+          { a: 7.40, e: 0.084, omega: 3.19, m0: 5.9, size: 4.8, tint: "#5a544b" },
+          { a: 8.26, e: 0.042, omega: 0.27, m0: 1.3, size: 7.6, tint: "#807668" },
         ];
 
-        function isLand(lat, lng) {
-          while (lng > 180) lng -= 360;
-          while (lng < -180) lng += 360;
-          for (let i = 0; i < LAND.length; i++) {
-            const b = LAND[i];
-            if (lat >= b[0] && lat <= b[1] && lng >= b[2] && lng <= b[3]) return true;
-          }
-          return false;
-        }
+        const A_MAX = BODIES[BODIES.length - 1].a;
 
-        // Render config
-        const dpr = Math.min(window.devicePixelRatio || 1, 2);
-        const W = 40, H = 20;
-        const R = 9;
-        const X_SCALE = 1.82;
-        const FONT_PX = 12;
-        const COL_W = 7;
-        const ROW_H = 11;
-        canvas.width = (W * COL_W) * dpr;
-        canvas.height = (H * ROW_H) * dpr;
-        canvas.style.width = (W * COL_W) + "px";
-        canvas.style.height = (H * ROW_H) + "px";
-
-        const ctx = canvas.getContext("2d");
-        ctx.scale(dpr, dpr);
-        ctx.font = FONT_PX + 'px ui-monospace, SFMono-Regular, Menlo, "Cascadia Mono", Consolas, monospace';
-        ctx.textBaseline = "top";
-
-        const LAND_CHARS  = ".,:;+=*#$&@%";
-        const OCEAN_CHARS = " ..";
-        const LAND_COLOR  = "rgba(107, 68, 35, 0.88)";
-        const OCEAN_COLOR = "rgba(107, 68, 35, 0.28)";
-
-        // Light: upper-right, in front of sphere (toward viewer)
-        const lx = 0.35, ly = 0.45, lz = 0.82;
-        // Earth axial tilt, ~23.5°, rotation around viewer's X (pole tips toward viewer)
-        const TILT = 0.4101;
-        const cT = Math.cos(TILT), sT = Math.sin(TILT);
-        const R2D = 180 / Math.PI;
-
-        let angle = 0;
-        let running = !document.hidden;
-        let lastT = 0;
-        const stepMs = 1000 / 24;
-
-        document.addEventListener("visibilitychange", () => {
-          running = !document.hidden;
-          if (running) requestAnimationFrame(frame);
+        BODIES.forEach((b) => {
+          b.period = Math.pow(b.a, 1.5);
         });
 
-        const N = W * H;
-        const charBuf = new Uint8Array(N);
-        const layerBuf = new Uint8Array(N); // 0 empty, 1 ocean, 2 land
-        const zb = new Float32Array(N);
+        // ── DOM ────────────────────────────────────────────────────
+        BODIES.forEach((b, i) => {
+          const el = document.createElement("div");
+          el.className = "body" + (b.live ? " live" : "");
 
-        function frame(t) {
-          if (!running) return;
-          if (t - lastT < stepMs) {
-            requestAnimationFrame(frame);
-            return;
+          const orb = document.createElement("span");
+          orb.className = "orb";
+          orb.style.width = b.size + "px";
+          orb.style.height = b.size + "px";
+          if (b.tint) orb.style.setProperty("--orb", b.tint);
+
+          const night = document.createElement("span");
+          night.className = "night";
+          orb.appendChild(night);
+          el.appendChild(orb);
+
+          if (b.live) {
+            const link = document.createElement("a");
+            link.href = b.href;
+            link.setAttribute(
+              "aria-label",
+              b.name + " — open " + b.href.replace("https://", "")
+            );
+            el.appendChild(link);
+
+            const tag = document.createElement("span");
+            tag.className = "tag";
+            tag.textContent = b.name;
+            el.appendChild(tag);
+            b.tag = tag;
+          } else {
+            el.setAttribute("aria-hidden", "true");
           }
-          lastT = t;
 
-          const ca = Math.cos(angle), sa = Math.sin(angle);
-          charBuf.fill(0);
-          layerBuf.fill(0);
-          for (let i = 0; i < N; i++) zb[i] = -1e9;
+          const enter = () => show(i);
+          orb.addEventListener("mouseenter", enter);
+          orb.addEventListener("mouseleave", () => show(5));
+          if (b.live) {
+            el.querySelector("a").addEventListener("focus", enter);
+            el.querySelector("a").addEventListener("blur", () => show(5));
+          }
 
-          // Sample density tuned for ~28k iter/frame, full pixel coverage at 40x20.
-          for (let th = 0; th < Math.PI; th += 0.05) {
-            const sTh = Math.sin(th), cTh = Math.cos(th);
-            const lat = 90 - th * R2D;
-            for (let ph = 0; ph < 6.2832; ph += 0.014) {
-              const lng = ph * R2D - 180;
-              const cPh = Math.cos(ph), sPh = Math.sin(ph);
-              // Local sphere point (Earth-fixed frame)
-              const xL = sTh * cPh;
-              const yL = cTh;
-              const zL = sTh * sPh;
-              // Spin around local Y (polar axis)
-              const xs = xL * ca + zL * sa;
-              const ys = yL;
-              const zs = -xL * sa + zL * ca;
-              // Tilt: rotate around viewer's X axis
-              const xv = xs;
-              const yv = ys * cT - zs * sT;
-              const zv = ys * sT + zs * cT;
-              // Orthographic projection
-              const sx = (W * 0.5 + xv * R * X_SCALE) | 0;
-              const sy = (H * 0.5 - yv * R) | 0;
-              if (sx < 0 || sx >= W || sy < 0 || sy >= H) continue;
-              const idx = sy * W + sx;
-              if (zv <= zb[idx]) continue;
-              zb[idx] = zv;
-              // Lighting: normal == viewer-frame position on unit sphere
-              const dot = xv * lx + yv * ly + zv * lz;
-              const lum = Math.max(0, dot) * 0.7 + 0.3;
-              if (isLand(lat, lng)) {
-                const ci = Math.min(LAND_CHARS.length - 1, Math.max(0, (lum * LAND_CHARS.length) | 0));
-                charBuf[idx] = ci;
-                layerBuf[idx] = 2;
-              } else {
-                const ci = Math.min(OCEAN_CHARS.length - 1, (lum * OCEAN_CHARS.length) | 0);
-                charBuf[idx] = ci;
-                layerBuf[idx] = 1;
+          b.el = el;
+          b.night = night;
+          bodiesLayer.appendChild(el);
+        });
+
+        function fmtPeriod(years) {
+          return years < 10 ? years.toFixed(2) + " yr" : years.toFixed(1) + " yr";
+        }
+
+        function show(i) {
+          const b = BODIES[i];
+          readout.dataset.live = b.live ? "true" : "false";
+          roName.textContent = b.live ? b.name : "Unassigned";
+          roOrbit.textContent = ROMAN[i];
+          roPeriod.textContent = fmtPeriod(b.period);
+          roState.textContent = b.live ? b.state : "Empty";
+        }
+
+        // ── Layout ─────────────────────────────────────────────────
+        let cx = 0, cy = 0, unit = 0, W = 0, H = 0;
+
+        function layout() {
+          const rect = stage.getBoundingClientRect();
+          W = rect.width;
+          H = rect.height;
+          cx = W / 2;
+          cy = H * (W < 640 ? 0.55 : 0.5);
+
+          TAGS_ON = W >= 640 && H >= 480;
+          const view = ((W < 640 ? 57 : 70) * Math.PI) / 180;
+          SQUASH = Math.cos(view);
+          DEPTH = Math.sin(view);
+
+          const maxRadius = Math.min(
+            W * (W < 640 ? 0.47 : 0.45),
+            H * 0.46 / SQUASH,
+            760
+          );
+          unit = maxRadius / A_MAX;
+
+          BODIES.forEach((b) => { b.tagW = 0; });
+          drawStars();
+          drawRings();
+          // Place immediately so bodies are correct even while paused.
+          place(elapsed * YEARS_PER_SEC);
+        }
+
+        function drawStars() {
+          const dpr = Math.min(window.devicePixelRatio || 1, 2);
+          starsCanvas.width = W * dpr;
+          starsCanvas.height = H * dpr;
+          const ctx = starsCanvas.getContext("2d");
+          if (!ctx) return;
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+          ctx.clearRect(0, 0, W, H);
+
+          // Deterministic scatter — the field must not reshuffle on resize.
+          let seed = 0x9e3779b9;
+          const rand = () => {
+            seed ^= seed << 13; seed ^= seed >>> 17; seed ^= seed << 5;
+            return ((seed >>> 0) % 100000) / 100000;
+          };
+
+          const count = Math.round((W * H) / 5200);
+          for (let i = 0; i < count; i++) {
+            const x = rand() * W;
+            const y = rand() * H;
+            const r = rand();
+            const size = r > 0.97 ? 1.5 : r > 0.82 ? 1.05 : 0.7;
+            // Thin the field near the sun so the orrery reads clean.
+            const d = Math.hypot(x - cx, (y - cy) / SQUASH) / (A_MAX * unit || 1);
+            const alpha = (0.1 + rand() * 0.45) * Math.min(1, 0.22 + d * 0.72);
+            ctx.fillStyle =
+              r > 0.9
+                ? "rgba(233, 219, 197, " + alpha + ")"
+                : "rgba(226, 226, 232, " + alpha + ")";
+            ctx.beginPath();
+            ctx.arc(x, y, size, 0, 6.2832);
+            ctx.fill();
+          }
+        }
+
+        function drawRings() {
+          ringsSvg.textContent = "";
+          ringsSvg.setAttribute("viewBox", "0 0 " + W + " " + H);
+
+          // The squash is applied to the whole group, so each ellipse can be
+          // authored in true orbital coordinates and rotated by its own omega.
+          const g = document.createElementNS(SVG_NS, "g");
+          g.setAttribute(
+            "transform",
+            "translate(" + cx + " " + cy + ") scale(1 " + SQUASH + ")"
+          );
+
+          BODIES.forEach((b) => {
+            const A = b.a * unit;
+            const B = A * Math.sqrt(1 - b.e * b.e);
+            const c = A * b.e;
+            const el = document.createElementNS(SVG_NS, "ellipse");
+            // Sun sits at a focus, so the ellipse centre is offset by c.
+            el.setAttribute("cx", String(-c));
+            el.setAttribute("cy", "0");
+            el.setAttribute("rx", String(A));
+            el.setAttribute("ry", String(B));
+            el.setAttribute(
+              "transform",
+              "rotate(" + (b.omega * 180) / Math.PI + ")"
+            );
+            el.setAttribute("fill", "none");
+            el.setAttribute("vector-effect", "non-scaling-stroke");
+            if (b.live) {
+              el.setAttribute("stroke", "rgba(207, 154, 82, 0.55)");
+              el.setAttribute("stroke-width", "1");
+            } else {
+              el.setAttribute("stroke", "rgba(233, 227, 216, 0.2)");
+              el.setAttribute("stroke-width", "1");
+              el.setAttribute("stroke-dasharray", "2 6");
+            }
+            g.appendChild(el);
+          });
+
+          ringsSvg.appendChild(g);
+        }
+
+        // ── Motion ─────────────────────────────────────────────────
+        function place(t) {
+          for (let i = 0; i < BODIES.length; i++) {
+            const b = BODIES[i];
+            const M = b.m0 + (2 * Math.PI * t) / b.period;
+
+            // Newton on Kepler's equation M = E - e·sin E. Four passes is
+            // plenty at these eccentricities.
+            let E = M;
+            for (let k = 0; k < 4; k++) {
+              E -= (E - b.e * Math.sin(E) - M) / (1 - b.e * Math.cos(E));
+            }
+
+            const nu =
+              2 *
+              Math.atan2(
+                Math.sqrt(1 + b.e) * Math.sin(E / 2),
+                Math.sqrt(1 - b.e) * Math.cos(E / 2)
+              );
+            const r = b.a * (1 - b.e * Math.cos(E)) * unit;
+
+            const theta = nu + b.omega;
+            const x = r * Math.cos(theta);
+            const z = r * Math.sin(theta);
+
+            const sx = cx + x;
+            const sy = cy + z * SQUASH;
+            const depth = z * DEPTH;
+
+            const scale = 1 + (depth / (A_MAX * unit || 1)) * 0.16;
+            b.el.style.transform =
+              "translate3d(" + sx + "px," + sy + "px,0) scale(" + scale + ")";
+            b.el.style.zIndex = String(1000 + Math.round(depth));
+
+            // Terminator faces away from the sun, which is always at centre.
+            b.night.style.transform = "rotate(" + Math.atan2(sy - cy, sx - cx) + "rad)";
+
+            if (b.live && TAGS_ON) {
+              // Keep the label outboard, but never let it run off the edge.
+              const need = b.tagW || (b.tagW = b.tag.offsetWidth + 26);
+              let flip = sx < cx;
+              if (flip && sx - need < 6) flip = false;
+              else if (!flip && sx + need > W - 6) flip = true;
+              if (b.flipped !== flip) {
+                b.flipped = flip;
+                b.el.classList.toggle("flip", flip);
               }
             }
           }
+        }
 
-          ctx.clearRect(0, 0, W * COL_W, H * ROW_H);
-          // Two passes: ocean first (faint), land on top (bold)
-          for (let r = 0; r < H; r++) {
-            let oceanRow = "", landRow = "";
-            for (let c = 0; c < W; c++) {
-              const idx = r * W + c;
-              const layer = layerBuf[idx];
-              if (layer === 2) {
-                landRow += LAND_CHARS[charBuf[idx]];
-                oceanRow += " ";
-              } else if (layer === 1) {
-                oceanRow += OCEAN_CHARS[charBuf[idx]];
-                landRow += " ";
-              } else {
-                oceanRow += " ";
-                landRow += " ";
-              }
-            }
-            ctx.fillStyle = OCEAN_COLOR;
-            ctx.fillText(oceanRow, 0, r * ROW_H);
-            ctx.fillStyle = LAND_COLOR;
-            ctx.fillText(landRow, 0, r * ROW_H);
-          }
+        let elapsed = 0;
+        let last = 0;
 
-          // ~30s per full revolution at 24fps
-          angle += 0.0087;
-          if (angle > 6.2832) angle -= 6.2832;
+        function frame(now) {
+          // rAF already stops while the tab is hidden; the clamp keeps a long
+          // gap from fast-forwarding the system by years on the next frame.
+          if (last) elapsed += Math.min((now - last) / 1000, 0.1);
+          last = now;
+          place(elapsed * YEARS_PER_SEC);
           requestAnimationFrame(frame);
         }
 
-        requestAnimationFrame(frame);
+        let resizeTimer = 0;
+        window.addEventListener("resize", () => {
+          clearTimeout(resizeTimer);
+          resizeTimer = window.setTimeout(layout, 120);
+        });
+
+        layout();
+        show(5);
+
+        if (!reduced) requestAnimationFrame(frame);
       })();
     </script>
   </body>
