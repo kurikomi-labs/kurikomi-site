@@ -647,9 +647,46 @@ const canonical = "https://kurikomi.com/";
 
         const A_MAX = BODIES[BODIES.length - 1].a;
 
-        BODIES.forEach((b) => {
+        // Real systems are not coplanar. Inclination (deg) tilts each orbit
+        // against the reference plane; the ascending node turns the tilt axis.
+        const INC = [6.8, 2.1, 9.4, 4.3, 11.8, 2.6, 7.9, 13.2, 5.1, 10.4, 3.4, 8.7];
+        const NODE = [0.4, 2.9, 5.1, 1.3, 3.8, 0.9, 4.6, 2.2, 5.7, 1.8, 3.1, 0.2];
+
+        BODIES.forEach((b, i) => {
           b.period = Math.pow(b.a, 1.5);
+          b.inc = (INC[i] * Math.PI) / 180;
+          b.ci = Math.cos(b.inc);
+          b.si = Math.sin(b.inc);
+          b.cO = Math.cos(NODE[i]);
+          b.sO = Math.sin(NODE[i]);
         });
+
+        const P = { x: 0, y: 0, depth: 0 };
+
+        // Orbital elements to screen. Shared by the rings and the bodies, so a
+        // planet can never drift off the ellipse it is supposed to ride.
+        function project(b, nu, r, out) {
+          const u = nu + b.omega;
+          const cu = Math.cos(u);
+          const su = Math.sin(u);
+          const X = r * (b.cO * cu - b.sO * su * b.ci);
+          const Y = r * (b.sO * cu + b.cO * su * b.ci);
+          const Z = r * su * b.si;
+          out.x = cx + X;
+          out.y = cy + Y * SQUASH - Z * DEPTH;
+          out.depth = Y * DEPTH + Z * SQUASH;
+          return out;
+        }
+
+        function trueAnomaly(b, E) {
+          return (
+            2 *
+            Math.atan2(
+              Math.sqrt(1 + b.e) * Math.sin(E / 2),
+              Math.sqrt(1 - b.e) * Math.cos(E / 2)
+            )
+          );
+        }
 
         // ── DOM ────────────────────────────────────────────────────
         BODIES.forEach((b, i) => {
@@ -778,43 +815,31 @@ const canonical = "https://kurikomi.com/";
         function drawRings() {
           ringsSvg.textContent = "";
           ringsSvg.setAttribute("viewBox", "0 0 " + W + " " + H);
-
-          // The squash is applied to the whole group, so each ellipse can be
-          // authored in true orbital coordinates and rotated by its own omega.
-          const g = document.createElementNS(SVG_NS, "g");
-          g.setAttribute(
-            "transform",
-            "translate(" + cx + " " + cy + ") scale(1 " + SQUASH + ")"
-          );
+          const frag = document.createDocumentFragment();
+          const STEPS = 320;
 
           BODIES.forEach((b) => {
-            const A = b.a * unit;
-            const B = A * Math.sqrt(1 - b.e * b.e);
-            const c = A * b.e;
-            const el = document.createElementNS(SVG_NS, "ellipse");
-            // Sun sits at a focus, so the ellipse centre is offset by c.
-            el.setAttribute("cx", String(-c));
-            el.setAttribute("cy", "0");
-            el.setAttribute("rx", String(A));
-            el.setAttribute("ry", String(B));
-            el.setAttribute(
-              "transform",
-              "rotate(" + (b.omega * 180) / Math.PI + ")"
-            );
+            let d = "";
+            for (let k = 0; k <= STEPS; k++) {
+              const E = (k / STEPS) * 6.2831853;
+              const r = b.a * (1 - b.e * Math.cos(E)) * unit;
+              project(b, trueAnomaly(b, E), r, P);
+              d += (k ? "L" : "M") + P.x.toFixed(2) + " " + P.y.toFixed(2);
+            }
+            const el = document.createElementNS(SVG_NS, "path");
+            el.setAttribute("d", d + "Z");
             el.setAttribute("fill", "none");
-            el.setAttribute("vector-effect", "non-scaling-stroke");
+            el.setAttribute("stroke-width", "1");
             if (b.live) {
               el.setAttribute("stroke", "rgba(207, 154, 82, 0.55)");
-              el.setAttribute("stroke-width", "1");
             } else {
               el.setAttribute("stroke", "rgba(233, 227, 216, 0.2)");
-              el.setAttribute("stroke-width", "1");
               el.setAttribute("stroke-dasharray", "2 6");
             }
-            g.appendChild(el);
+            frag.appendChild(el);
           });
 
-          ringsSvg.appendChild(g);
+          ringsSvg.appendChild(frag);
         }
 
         // ── Motion ─────────────────────────────────────────────────
@@ -830,21 +855,13 @@ const canonical = "https://kurikomi.com/";
               E -= (E - b.e * Math.sin(E) - M) / (1 - b.e * Math.cos(E));
             }
 
-            const nu =
-              2 *
-              Math.atan2(
-                Math.sqrt(1 + b.e) * Math.sin(E / 2),
-                Math.sqrt(1 - b.e) * Math.cos(E / 2)
-              );
+            const nu = trueAnomaly(b, E);
             const r = b.a * (1 - b.e * Math.cos(E)) * unit;
 
-            const theta = nu + b.omega;
-            const x = r * Math.cos(theta);
-            const z = r * Math.sin(theta);
-
-            const sx = cx + x;
-            const sy = cy + z * SQUASH;
-            const depth = z * DEPTH;
+            project(b, nu, r, P);
+            const sx = P.x;
+            const sy = P.y;
+            const depth = P.depth;
 
             const scale = 1 + (depth / (A_MAX * unit || 1)) * 0.16;
             b.el.style.transform =
