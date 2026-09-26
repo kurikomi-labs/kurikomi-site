@@ -82,8 +82,6 @@ const canonical = "https://kurikomi.com/";
         --serif: "Fraunces", Georgia, "Times New Roman", serif;
         --sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui,
           sans-serif;
-        --mono: ui-monospace, SFMono-Regular, Menlo, "Cascadia Mono", Consolas,
-          monospace;
       }
 
       *,
@@ -391,45 +389,42 @@ const canonical = "https://kurikomi.com/";
         padding-top: 0.75rem;
         border-top: 1px solid var(--rule);
         pointer-events: none;
-        font-variant-numeric: tabular-nums;
       }
 
-      .readout-name {
-        font-family: var(--sans);
-        font-size: 0.8125rem;
+      .readout-label {
+        font-size: 0.6875rem;
         font-weight: 500;
-        letter-spacing: 0.08em;
+        letter-spacing: 0.16em;
         text-transform: uppercase;
-        color: var(--bone);
-        margin: 0 0 0.5rem;
-        min-height: 1.2em;
+        color: var(--ash);
+        margin: 0 0 0.45rem;
       }
-      .readout[data-live="true"] .readout-name {
+
+      .readout-link {
+        display: inline-block;
+        font-size: 1.0625rem;
+        line-height: 1.2;
+        color: var(--brass-hi);
+        text-decoration: none;
+        pointer-events: auto;
+      }
+      .readout-link span {
+        display: inline-block;
+        transition: transform 0.25s cubic-bezier(0.22, 0.61, 0.36, 1);
+      }
+      .readout-link:hover span,
+      .readout-link:focus-visible span {
+        transform: translateX(3px);
+      }
+      .readout-link:hover {
         color: var(--brass-hi);
       }
 
-      .readout dl {
+      .readout-note {
         margin: 0;
-        display: grid;
-        grid-template-columns: auto 1fr;
-        gap: 0.2rem 1rem;
-        font-family: var(--mono);
-        font-size: 0.6875rem;
-        letter-spacing: 0.02em;
-        line-height: 1.6;
-      }
-      .readout dt {
+        font-size: 1.0625rem;
+        line-height: 1.2;
         color: var(--dim);
-        text-transform: uppercase;
-        letter-spacing: 0.1em;
-      }
-      .readout dd {
-        margin: 0;
-        color: var(--ash);
-        text-align: right;
-      }
-      .readout[data-live="true"] dd.state {
-        color: var(--brass);
       }
 
 
@@ -559,19 +554,15 @@ const canonical = "https://kurikomi.com/";
 
       <div class="thesis reveal r-1">
         <h1>We build one thing at a time.</h1>
-        <p>
-          An independent software company in Bukhara, Uzbekistan. One orbit is
-          occupied. Eleven are not.
-        </p>
+        <p>One orbit is occupied. Eleven are not.</p>
       </div>
 
-      <div class="readout reveal r-2" id="readout" data-live="true" aria-hidden="true">
-        <p class="readout-name" id="ro-name">Hoaka OS</p>
-        <dl>
-          <dt>Orbit</dt><dd id="ro-orbit">VI</dd>
-          <dt>Period</dt><dd id="ro-period">—</dd>
-          <dt>State</dt><dd class="state" id="ro-state">Shipping</dd>
-        </dl>
+      <div class="readout reveal r-2" id="readout" data-live="true">
+        <p class="readout-label" id="ro-label">Hoaka OS</p>
+        <a class="readout-link" id="ro-link" href="https://hoakaos.com"
+          >hoakaos.com <span aria-hidden="true">&rarr;</span></a
+        >
+        <p class="readout-note" id="ro-note" hidden>Unassigned</p>
       </div>
     </div>
 
@@ -618,10 +609,9 @@ const canonical = "https://kurikomi.com/";
         const bodiesLayer = document.getElementById("bodies");
         const sunEl = document.querySelector(".sun");
         const readout = document.getElementById("readout");
-        const roName = document.getElementById("ro-name");
-        const roOrbit = document.getElementById("ro-orbit");
-        const roPeriod = document.getElementById("ro-period");
-        const roState = document.getElementById("ro-state");
+        const roLabel = document.getElementById("ro-label");
+        const roLink = document.getElementById("ro-link");
+        const roNote = document.getElementById("ro-note");
         if (!stage || !bodiesLayer || !ringsSvg || !starsCanvas) return;
 
         const SVG_NS = "http://www.w3.org/2000/svg";
@@ -708,17 +698,12 @@ const canonical = "https://kurikomi.com/";
           bodiesLayer.appendChild(el);
         });
 
-        function fmtPeriod(years) {
-          return years < 10 ? years.toFixed(2) + " yr" : years.toFixed(1) + " yr";
-        }
-
         function show(i) {
           const b = BODIES[i];
           readout.dataset.live = b.live ? "true" : "false";
-          roName.textContent = b.live ? b.name : "Unassigned";
-          roOrbit.textContent = ROMAN[i];
-          roPeriod.textContent = fmtPeriod(b.period);
-          roState.textContent = b.live ? b.state : "Empty";
+          roLabel.textContent = b.live ? b.name : "Orbit " + ROMAN[i];
+          roLink.hidden = !b.live;
+          roNote.hidden = !!b.live;
         }
 
         // ── Layout ─────────────────────────────────────────────────
