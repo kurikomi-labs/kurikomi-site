@@ -388,33 +388,7 @@ const canonical = "https://kurikomi.com/";
         letter-spacing: -0.022em;
         line-height: 1;
         color: var(--bone);
-        display: inline-flex;
-        overflow: hidden;
-        max-width: 0;
-        transition: max-width 0.55s cubic-bezier(0.22, 0.61, 0.36, 1);
       }
-      .brand-tail > span {
-        display: inline-block;
-        opacity: 0;
-        transform: translateX(-5px);
-        transition: opacity 0.28s ease, transform 0.28s ease;
-      }
-      .brand:hover .brand-tail,
-      .brand:focus-visible .brand-tail {
-        max-width: 8em;
-      }
-      .brand:hover .brand-tail > span,
-      .brand:focus-visible .brand-tail > span {
-        opacity: 1;
-        transform: none;
-      }
-      .brand:hover .brand-tail > span:nth-child(1) { transition-delay: 0.04s; }
-      .brand:hover .brand-tail > span:nth-child(2) { transition-delay: 0.10s; }
-      .brand:hover .brand-tail > span:nth-child(3) { transition-delay: 0.16s; }
-      .brand:hover .brand-tail > span:nth-child(4) { transition-delay: 0.22s; }
-      .brand:hover .brand-tail > span:nth-child(5) { transition-delay: 0.28s; }
-      .brand:hover .brand-tail > span:nth-child(6) { transition-delay: 0.34s; }
-      .brand:hover .brand-tail > span:nth-child(7) { transition-delay: 0.40s; }
 
       /* ── Hero copy ────────────────────────────────────────────── */
 
@@ -498,19 +472,11 @@ const canonical = "https://kurikomi.com/";
         color: var(--brass);
       }
 
-      .cue {
-        position: absolute;
-        left: 1.5rem;
-        bottom: 2rem;
-        color: var(--dim);
-        pointer-events: none;
-      }
 
       @media (min-width: 900px) {
         .masthead { padding: 2.5rem 3rem; }
         .thesis { left: 3rem; bottom: 6rem; }
         .readout { right: 3rem; bottom: 6rem; }
-        .cue { left: 3rem; bottom: 2.5rem; }
       }
 
       @media (max-width: 640px) {
@@ -529,14 +495,12 @@ const canonical = "https://kurikomi.com/";
         .tag { display: none; }
         .sun { width: 64px; height: 64px; }
         .sun img { width: 19px; height: 28px; }
-        .cue { display: none; }
       }
 
       @media (max-height: 480px) {
         .tag { display: none; }
         .thesis { bottom: 3.5rem; }
         .readout { bottom: 3.5rem; }
-        .cue { display: none; }
       }
 
       /* ── Editorial ────────────────────────────────────────────── */
@@ -595,7 +559,6 @@ const canonical = "https://kurikomi.com/";
       .r-1 { animation-delay: 0.05s; }
       .r-2 { animation-delay: 0.55s; }
       .r-3 { animation-delay: 0.68s; }
-      .r-4 { animation-delay: 0.8s; }
 
       @keyframes reveal {
         to {
@@ -636,10 +599,9 @@ const canonical = "https://kurikomi.com/";
       <div id="bodies"></div>
 
       <div class="masthead">
-        <a class="brand reveal r-1" href="/" aria-label="Kurikomi" tabindex="0">
+        <a class="brand reveal r-1" href="/" aria-label="Kurikomi">
           <img class="brand-mark" src="/logo.svg" width="17" height="26" alt="" aria-hidden="true" />
-          <span class="brand-tail" aria-hidden="true"
-            ><span>u</span><span>r</span><span>i</span><span>k</span><span>o</span><span>m</span><span>i</span></span>
+          <span class="brand-tail" aria-hidden="true">urikomi</span>
         </a>
       </div>
 
@@ -659,8 +621,6 @@ const canonical = "https://kurikomi.com/";
           <dt>State</dt><dd class="state" id="ro-state">Shipping</dd>
         </dl>
       </div>
-
-      <p class="label cue reveal r-4">Scroll</p>
     </div>
 
     <main class="page">
@@ -672,10 +632,6 @@ const canonical = "https://kurikomi.com/";
           system, opens only what the university allows, locks to a single page
           for exams, and wipes itself when the student logs out.
         </p>
-        <p>
-          It replaces four separate products that cost $241.66 per machine in
-          the first year. Hoaka is $15 per machine, every year.
-        </p>
       </section>
 
       <section aria-labelledby="approach">
@@ -684,11 +640,6 @@ const canonical = "https://kurikomi.com/";
           We do not track you. We do not sell your data. We do not show ads.
           Hoaka keeps its server inside the building it serves — nothing leaves
           for a cloud we own.
-        </p>
-        <p>
-          We work in public, ship frequently, and plan for the long term over
-          the hype cycle. One product at a time, finished before the next one
-          starts.
         </p>
       </section>
 
@@ -963,7 +914,11 @@ const canonical = "https://kurikomi.com/";
             const scale = 1 + (depth / (A_MAX * unit || 1)) * 0.16;
             b.el.style.transform =
               "translate3d(" + sx + "px," + sy + "px,0) scale(" + scale + ")";
-            b.el.style.zIndex = String(1000 + Math.round(depth));
+            const layer = 1000 + Math.round(depth);
+            if (b.layer !== layer) {
+              b.layer = layer;
+              b.el.style.zIndex = String(layer);
+            }
 
             // Terminator faces away from the sun, which is always at centre.
             b.night.style.transform = "rotate(" + Math.atan2(sy - cy, sx - cx) + "rad)";
