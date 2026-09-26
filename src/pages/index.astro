@@ -350,46 +350,6 @@ const canonical = "https://kurikomi.com/";
         outline-offset: 4px;
       }
 
-      /* ── Masthead ─────────────────────────────────────────────── */
-
-      .masthead {
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 100%;
-        padding: 2rem 1.5rem;
-        pointer-events: none;
-      }
-
-      .brand {
-        display: inline-flex;
-        align-items: flex-end;
-        text-decoration: none;
-        color: var(--bone);
-        line-height: 1;
-        cursor: default;
-        pointer-events: auto;
-      }
-
-      .brand-mark {
-        width: 17px;
-        height: 26px;
-        display: block;
-        margin-bottom: -1px;
-        filter: brightness(0) saturate(100%) invert(93%) sepia(9%) saturate(300%)
-          hue-rotate(345deg) brightness(97%) contrast(90%);
-      }
-
-      .brand-tail {
-        font-family: var(--serif);
-        font-weight: 500;
-        font-variation-settings: "opsz" 24;
-        font-size: 1.4rem;
-        letter-spacing: -0.022em;
-        line-height: 1;
-        color: var(--bone);
-      }
-
       /* ── Hero copy ────────────────────────────────────────────── */
 
       .thesis {
@@ -474,7 +434,6 @@ const canonical = "https://kurikomi.com/";
 
 
       @media (min-width: 900px) {
-        .masthead { padding: 2.5rem 3rem; }
         .thesis { left: 3rem; bottom: 6rem; }
         .readout { right: 3rem; bottom: 6rem; }
       }
@@ -556,9 +515,8 @@ const canonical = "https://kurikomi.com/";
         transform: translateY(8px);
         animation: reveal 0.7s cubic-bezier(0.2, 0.6, 0.2, 1) forwards;
       }
-      .r-1 { animation-delay: 0.05s; }
-      .r-2 { animation-delay: 0.55s; }
-      .r-3 { animation-delay: 0.68s; }
+      .r-1 { animation-delay: 0.5s; }
+      .r-2 { animation-delay: 0.64s; }
 
       @keyframes reveal {
         to {
@@ -592,20 +550,14 @@ const canonical = "https://kurikomi.com/";
       <canvas id="stars" aria-hidden="true"></canvas>
       <svg id="rings" aria-hidden="true"></svg>
 
-      <div class="sun">
+      <div class="sun" role="img" aria-label="Kurikomi">
         <img src="/logo.svg" width="27" height="40" alt="" aria-hidden="true" />
       </div>
 
       <div id="bodies"></div>
 
-      <div class="masthead">
-        <a class="brand reveal r-1" href="/" aria-label="Kurikomi">
-          <img class="brand-mark" src="/logo.svg" width="17" height="26" alt="" aria-hidden="true" />
-          <span class="brand-tail" aria-hidden="true">urikomi</span>
-        </a>
-      </div>
 
-      <div class="thesis reveal r-2">
+      <div class="thesis reveal r-1">
         <h1>We build one thing at a time.</h1>
         <p>
           An independent software company in Bukhara, Uzbekistan. One orbit is
@@ -613,7 +565,7 @@ const canonical = "https://kurikomi.com/";
         </p>
       </div>
 
-      <div class="readout reveal r-3" id="readout" data-live="true" aria-hidden="true">
+      <div class="readout reveal r-2" id="readout" data-live="true" aria-hidden="true">
         <p class="readout-name" id="ro-name">Hoaka OS</p>
         <dl>
           <dt>Orbit</dt><dd id="ro-orbit">VI</dd>
@@ -672,6 +624,7 @@ const canonical = "https://kurikomi.com/";
         const starsCanvas = document.getElementById("stars");
         const ringsSvg = document.getElementById("rings");
         const bodiesLayer = document.getElementById("bodies");
+        const sunEl = document.querySelector(".sun");
         const readout = document.getElementById("readout");
         const roName = document.getElementById("ro-name");
         const roOrbit = document.getElementById("ro-orbit");
@@ -797,6 +750,11 @@ const canonical = "https://kurikomi.com/";
             760
           );
           unit = maxRadius / A_MAX;
+
+          if (sunEl) {
+            sunEl.style.left = cx + "px";
+            sunEl.style.top = cy + "px";
+          }
 
           BODIES.forEach((b) => { b.tagW = 0; });
           drawStars();
