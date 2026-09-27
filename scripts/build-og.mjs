@@ -68,17 +68,15 @@ const svg = `<?xml version="1.0" encoding="UTF-8"?>
     <g transform="rotate(${TILT[LIVE]})"><circle cx="${-ORBITS[LIVE] * 0.94}" cy="${-ORBITS[LIVE] * SQUASH * SPREAD[LIVE] * 0.34}" r="11" fill="url(#body)"/></g>
   </g>
 
-  <g transform="translate(96 144)" fill="${BONE}">
+  <g transform="translate(96 232)" fill="${BONE}">
     <g transform="scale(0.30)">
       ${logoSvg}
     </g>
   </g>
 
-  <text x="150" y="212" font-family="Georgia, serif" font-size="82" font-weight="500" fill="${BONE}" letter-spacing="-1.5">Kurikomi</text>
-  <text x="96" y="300" font-family="Helvetica, Arial, sans-serif" font-size="29" fill="${ASH}">We build one thing at a time.</text>
-  <text x="96" y="342" font-family="Helvetica, Arial, sans-serif" font-size="29" fill="${ASH}">One orbit is occupied. Eleven are not.</text>
-  <rect x="96" y="398" width="56" height="2" fill="${BRASS}"/>
-  <text x="96" y="436" font-family="Helvetica, Arial, sans-serif" font-size="21" fill="${BONE}" letter-spacing="2">KURIKOMI.COM</text>
+  <text x="150" y="300" font-family="Georgia, serif" font-size="82" font-weight="500" fill="${BONE}" letter-spacing="-1.5">Kurikomi</text>
+  <rect x="96" y="346" width="56" height="2" fill="${BRASS}"/>
+  <text x="96" y="386" font-family="Helvetica, Arial, sans-serif" font-size="21" fill="${BONE}" letter-spacing="2">KURIKOMI.COM</text>
 </svg>`;
 
 const resvg = new Resvg(svg, {
