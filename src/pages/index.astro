@@ -646,6 +646,13 @@ const canonical = "https://kurikomi.com/";
 
         const P = { x: 0, y: 0, depth: 0 };
 
+        // A stroke cannot fade along a curved path, so the trail is a run of
+        // short segments with a falling opacity ramp. Spans 0.45rad of
+        // eccentric anomaly behind the live body.
+        const TRAIL_SEGS = 16;
+        const TRAIL_SPAN = 0.6;
+        const trailSegs = [];
+
         // Orbital elements to screen. Shared by the rings and the bodies, so a
         // planet can never drift off the ellipse it is supposed to ride.
         function project(b, nu, r, out) {
@@ -842,6 +849,22 @@ const canonical = "https://kurikomi.com/";
             frag.appendChild(el);
           });
 
+          trailSegs.length = 0;
+          const live = BODIES.find((b) => b.live);
+          // A trail implies motion, so it has no business in a still scene.
+          if (live && !reduced) {
+            for (let k = 0; k < TRAIL_SEGS; k++) {
+              const t = 1 - k / TRAIL_SEGS;
+              const seg = document.createElementNS(SVG_NS, "path");
+              seg.setAttribute("fill", "none");
+              seg.setAttribute("stroke-linecap", "round");
+              seg.setAttribute("stroke", "rgba(255, 234, 196, " + (0.95 * t * t).toFixed(3) + ")");
+              seg.setAttribute("stroke-width", (2.6 * t + 0.4).toFixed(2));
+              frag.appendChild(seg);
+              trailSegs.push(seg);
+            }
+          }
+
           ringsSvg.appendChild(frag);
         }
 
@@ -877,6 +900,23 @@ const canonical = "https://kurikomi.com/";
 
             // Terminator faces away from the sun, which is always at centre.
             b.night.style.transform = "rotate(" + Math.atan2(sy - cy, sx - cx) + "rad)";
+
+            if (b.live && trailSegs.length) {
+              let px = sx;
+              let py = sy;
+              for (let k = 0; k < TRAIL_SEGS; k++) {
+                const e = E - (TRAIL_SPAN * (k + 1)) / TRAIL_SEGS;
+                const rr = b.a * (1 - b.e * Math.cos(e)) * unit;
+                project(b, trueAnomaly(b, e), rr, P);
+                trailSegs[k].setAttribute(
+                  "d",
+                  "M" + px.toFixed(1) + " " + py.toFixed(1) +
+                  "L" + P.x.toFixed(1) + " " + P.y.toFixed(1)
+                );
+                px = P.x;
+                py = P.y;
+              }
+            }
 
             if (b.live && TAGS_ON) {
               // Keep the label outboard, but never let it run off the edge.
