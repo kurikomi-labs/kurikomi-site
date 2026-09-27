@@ -7,7 +7,10 @@ const fontDir = resolve(__dirname, "../public/fonts");
 mkdirSync(fontDir, { recursive: true });
 
 const cssUrl =
-  "https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500&family=Inter:wght@400;500&display=swap";
+  // Fraunces is pinned to the single instance the headline uses (opsz 96,
+  // wght 400). The variable face costs 67KB for one line of text; the static
+  // instance is 16KB. Inter stays variable because it needs 400 and 500.
+  "https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@96,400&family=Inter:wght@400;500&display=swap";
 
 const ua =
   "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36";
