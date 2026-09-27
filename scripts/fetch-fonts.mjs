@@ -12,6 +12,13 @@ const cssUrl =
   // instance is 16KB. Inter stays variable because it needs 400 and 500.
   "https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@96,400&family=Inter:wght@400;500&display=swap";
 
+// Inter is additionally subset to printable ASCII plus the typographic marks
+// the site uses. Full latin is 48KB; this is 33KB. Anything outside the set
+// falls back to the latin-ext face or the system sans.
+export const INTER_SUBSET =
+  Array.from({ length: 0x7f - 0x20 }, (_, i) => String.fromCharCode(0x20 + i)).join("") +
+  "\u00b7\u00a9\u2014\u2013\u2019\u201c\u201d\u2192\u2026";
+
 const ua =
   "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36";
 
