@@ -270,27 +270,38 @@ const canonical = "https://kurikomi.com/";
         overflow: hidden;
         will-change: transform;
       }
+      /* The lit hemisphere faces the sun, so an off-centre radial darkens the
+         far limb while a thin arc picks out the near one. Both ride .night,
+         which is rotated each frame to point at the centre. */
       .night::after {
         content: "";
         position: absolute;
         inset: -1px;
         border-radius: 50%;
-        background: linear-gradient(
-          to right,
-          rgba(4, 4, 3, 0) 26%,
-          rgba(4, 4, 3, 0.62) 58%,
-          rgba(4, 4, 3, 0.88) 100%
+        background: radial-gradient(
+          circle at 22% 50%,
+          rgba(6, 5, 4, 0) 0%,
+          rgba(6, 5, 4, 0.14) 40%,
+          rgba(6, 5, 4, 0.74) 74%,
+          rgba(6, 5, 4, 0.93) 100%
+        );
+      }
+      .night::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: 50%;
+        background: radial-gradient(
+          circle at 15% 50%,
+          rgba(255, 240, 214, 0.55) 0%,
+          rgba(255, 240, 214, 0.14) 24%,
+          rgba(255, 240, 214, 0) 48%
         );
       }
 
       .body.live .orb {
         cursor: pointer;
-        background: radial-gradient(
-          circle at 34% 30%,
-          var(--brass-hi) 0%,
-          var(--brass) 46%,
-          #8a5f2c 100%
-        );
+        background: #d9a259;
         box-shadow:
           inset 0 0 0 0.5px rgba(242, 205, 145, 0.55),
           0 0 14px 2px rgba(207, 154, 82, 0.34),
@@ -298,11 +309,12 @@ const canonical = "https://kurikomi.com/";
       }
 
       .body.live .night::after {
-        background: linear-gradient(
-          to right,
-          rgba(4, 4, 3, 0) 34%,
-          rgba(4, 4, 3, 0.4) 68%,
-          rgba(4, 4, 3, 0.7) 100%
+        background: radial-gradient(
+          circle at 26% 50%,
+          rgba(6, 5, 4, 0) 0%,
+          rgba(6, 5, 4, 0.05) 42%,
+          rgba(6, 5, 4, 0.42) 80%,
+          rgba(6, 5, 4, 0.62) 100%
         );
       }
 
@@ -785,6 +797,24 @@ const canonical = "https://kurikomi.com/";
           if (!ctx) return;
           ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
           ctx.clearRect(0, 0, W, H);
+
+          // Dust lying in the orbital plane — the same squash the orbits use,
+          // so the system sits in a disc rather than empty black.
+          const bandR = A_MAX * unit * 1.15;
+          if (bandR > 0) {
+            ctx.save();
+            ctx.translate(cx, cy);
+            ctx.scale(1, SQUASH);
+            const band = ctx.createRadialGradient(0, 0, 0, 0, 0, bandR);
+            band.addColorStop(0, "rgba(212, 162, 95, 0.11)");
+            band.addColorStop(0.4, "rgba(180, 138, 84, 0.05)");
+            band.addColorStop(1, "rgba(150, 118, 74, 0)");
+            ctx.fillStyle = band;
+            ctx.beginPath();
+            ctx.arc(0, 0, bandR, 0, 6.2831853);
+            ctx.fill();
+            ctx.restore();
+          }
 
           // Deterministic scatter — the field must not reshuffle on resize.
           let seed = 0x9e3779b9;
