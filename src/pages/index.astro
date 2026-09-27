@@ -928,9 +928,15 @@ const canonical = "https://kurikomi.com/";
             }
 
             if (b.live && TAGS_ON) {
-              // Keep the label outboard, but never let it run off the edge.
+              // Sit the label on the leading side. The trail sweeps out behind
+              // the body, so anchoring to the direction of travel keeps the two
+              // from ever sharing the same space.
+              const ahead = E + 0.05;
+              const ra = b.a * (1 - b.e * Math.cos(ahead)) * unit;
+              project(b, trueAnomaly(b, ahead), ra, P);
+
               const need = b.tagW || (b.tagW = b.tag.offsetWidth + 26);
-              let flip = sx < cx;
+              let flip = P.x < sx;
               if (flip && sx - need < 6) flip = false;
               else if (!flip && sx + need > W - 6) flip = true;
               if (b.flipped !== flip) {
