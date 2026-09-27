@@ -719,10 +719,8 @@ const canonical = "https://kurikomi.com/";
           if (b.live) {
             const link = document.createElement("a");
             link.href = b.href;
-            link.setAttribute(
-              "aria-label",
-              b.name + " — open " + b.href.replace("https://", "")
-            );
+            link.setAttribute("tabindex", "-1");
+            link.setAttribute("aria-hidden", "true");
             el.appendChild(link);
 
             const tag = document.createElement("span");
