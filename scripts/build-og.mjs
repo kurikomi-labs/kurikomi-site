@@ -26,11 +26,16 @@ const SQUASH = 0.342;
 const ORBITS = [46, 68, 91, 116, 143, 172, 202, 235, 269, 305, 343, 383];
 const LIVE = 5;
 
-const rings = ORBITS.map((a, i) =>
-  i === LIVE
-    ? `<ellipse cx="0" cy="0" rx="${a}" ry="${a * SQUASH}" fill="none" stroke="${BRASS}" stroke-opacity="0.55" stroke-width="1.6"/>`
-    : `<ellipse cx="0" cy="0" rx="${a}" ry="${a * SQUASH}" fill="none" stroke="${BONE}" stroke-opacity="0.16" stroke-width="1.4" stroke-dasharray="2.5 8"/>`
-).join("\n    ");
+const TILT = [-7, 3, -4, 8, -2, 2, 6, -9, 4, -5, 9, -3];
+const SPREAD = [1.0, 0.92, 1.08, 0.88, 1.12, 0.97, 0.9, 1.14, 0.94, 1.06, 0.86, 1.1];
+
+const rings = ORBITS.map((a, i) => {
+  const ry = a * SQUASH * SPREAD[i];
+  const t = `rotate(${TILT[i]})`;
+  return i === LIVE
+    ? `<ellipse cx="0" cy="0" rx="${a}" ry="${ry}" transform="${t}" fill="none" stroke="${BRASS}" stroke-opacity="0.55" stroke-width="1.6"/>`
+    : `<ellipse cx="0" cy="0" rx="${a}" ry="${ry}" transform="${t}" fill="none" stroke="${BONE}" stroke-opacity="0.16" stroke-width="1.4" stroke-dasharray="2.5 8"/>`;
+}).join("\n    ");
 
 const svg = `<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
@@ -60,7 +65,7 @@ const svg = `<?xml version="1.0" encoding="UTF-8"?>
     <g transform="translate(-20 -30) scale(0.26)" fill="${BRASS}">
       ${logoSvg}
     </g>
-    <circle cx="${-ORBITS[LIVE] * 0.94}" cy="${-ORBITS[LIVE] * SQUASH * 0.34}" r="11" fill="url(#body)"/>
+    <g transform="rotate(${TILT[LIVE]})"><circle cx="${-ORBITS[LIVE] * 0.94}" cy="${-ORBITS[LIVE] * SQUASH * SPREAD[LIVE] * 0.34}" r="11" fill="url(#body)"/></g>
   </g>
 
   <g transform="translate(96 144)" fill="${BONE}">
@@ -70,8 +75,8 @@ const svg = `<?xml version="1.0" encoding="UTF-8"?>
   </g>
 
   <text x="150" y="212" font-family="Georgia, serif" font-size="82" font-weight="500" fill="${BONE}" letter-spacing="-1.5">Kurikomi</text>
-  <text x="96" y="300" font-family="Helvetica, Arial, sans-serif" font-size="29" fill="${ASH}">An independent software company</text>
-  <text x="96" y="342" font-family="Helvetica, Arial, sans-serif" font-size="29" fill="${ASH}">in Bukhara, Uzbekistan.</text>
+  <text x="96" y="300" font-family="Helvetica, Arial, sans-serif" font-size="29" fill="${ASH}">We build one thing at a time.</text>
+  <text x="96" y="342" font-family="Helvetica, Arial, sans-serif" font-size="29" fill="${ASH}">One orbit is occupied. Eleven are not.</text>
   <rect x="96" y="398" width="56" height="2" fill="${BRASS}"/>
   <text x="96" y="436" font-family="Helvetica, Arial, sans-serif" font-size="21" fill="${BONE}" letter-spacing="2">KURIKOMI.COM</text>
 </svg>`;
