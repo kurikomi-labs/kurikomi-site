@@ -172,6 +172,12 @@ const canonical = "https://kurikomi.com/";
         border-bottom: 1px solid var(--rule);
       }
 
+      #system {
+        position: absolute;
+        inset: 0;
+        will-change: transform;
+      }
+
       #stars,
       #rings {
         position: absolute;
@@ -531,13 +537,15 @@ const canonical = "https://kurikomi.com/";
 
     <div class="stage" id="stage">
       <canvas id="stars" aria-hidden="true"></canvas>
-      <svg id="rings" aria-hidden="true"></svg>
+      <div id="system">
+        <svg id="rings" aria-hidden="true"></svg>
 
-      <div class="sun" role="img" aria-label="Kurikomi">
-        <img src="/logo.svg" width="27" height="40" alt="" aria-hidden="true" />
+        <div class="sun" role="img" aria-label="Kurikomi">
+          <img src="/logo.svg" width="27" height="40" alt="" aria-hidden="true" />
+        </div>
+
+        <div id="bodies"></div>
       </div>
-
-      <div id="bodies"></div>
 
 
       <div class="readout reveal r-1" id="readout" data-live="true">
@@ -589,6 +597,7 @@ const canonical = "https://kurikomi.com/";
         const starsCanvas = document.getElementById("stars");
         const ringsSvg = document.getElementById("rings");
         const bodiesLayer = document.getElementById("bodies");
+        const systemEl = document.getElementById("system");
         const sunEl = document.querySelector(".sun");
         const readout = document.getElementById("readout");
         const roLabel = document.getElementById("ro-label");
@@ -932,6 +941,24 @@ const canonical = "https://kurikomi.com/";
           }
         }
 
+        // Pointer parallax. Targets are set on move and eased toward in the
+        // frame loop so the tilt never snaps.
+        const TILT_MAX = 3.4;
+        const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+        let tiltX = 0, tiltY = 0, tiltTX = 0, tiltTY = 0;
+
+        if (finePointer && !reduced) {
+          stage.addEventListener("pointermove", (e) => {
+            const r = stage.getBoundingClientRect();
+            tiltTY = ((e.clientX - r.left) / r.width - 0.5) * 2 * TILT_MAX;
+            tiltTX = -((e.clientY - r.top) / r.height - 0.5) * 2 * TILT_MAX;
+          });
+          stage.addEventListener("pointerleave", () => {
+            tiltTX = 0;
+            tiltTY = 0;
+          });
+        }
+
         let elapsed = 0;
         let last = 0;
 
@@ -941,6 +968,19 @@ const canonical = "https://kurikomi.com/";
           if (last) elapsed += Math.min((now - last) / 1000, 0.1);
           last = now;
           place(elapsed * YEARS_PER_SEC);
+
+          if (finePointer) {
+            const dx = tiltTX - tiltX;
+            const dy = tiltTY - tiltY;
+            if (Math.abs(dx) > 0.001 || Math.abs(dy) > 0.001) {
+              tiltX += dx * 0.06;
+              tiltY += dy * 0.06;
+              systemEl.style.transform =
+                "perspective(1400px) rotateX(" + tiltX.toFixed(3) +
+                "deg) rotateY(" + tiltY.toFixed(3) + "deg)";
+            }
+          }
+
           requestAnimationFrame(frame);
         }
 
