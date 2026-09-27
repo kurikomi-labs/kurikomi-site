@@ -131,6 +131,18 @@ const canonical = "https://kurikomi.com/";
         color: var(--void);
       }
 
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        margin: -1px;
+        padding: 0;
+        overflow: hidden;
+        clip-path: inset(50%);
+        white-space: nowrap;
+        border: 0;
+      }
+
       .label {
         font-family: var(--sans);
         font-size: 0.6875rem;
@@ -360,36 +372,6 @@ const canonical = "https://kurikomi.com/";
         outline-offset: 4px;
       }
 
-      /* ── Hero copy ────────────────────────────────────────────── */
-
-      .thesis {
-        position: absolute;
-        left: 1.5rem;
-        bottom: 5.25rem;
-        max-width: 22rem;
-        pointer-events: none;
-      }
-
-      .thesis h1 {
-        font-family: var(--serif);
-        font-weight: 400;
-        font-size: clamp(1.75rem, 1.2rem + 2.3vw, 2.5rem);
-        line-height: 1.14;
-        letter-spacing: -0.018em;
-        margin: 0 0 0.75rem;
-        color: var(--bone);
-        text-wrap: balance;
-        font-feature-settings: "kern", "liga", "calt", "ss01";
-      }
-
-      .thesis p {
-        font-size: 0.9375rem;
-        line-height: 1.6;
-        color: var(--ash);
-        margin: 0;
-        text-wrap: pretty;
-      }
-
       /* ── Readout plaque ───────────────────────────────────────── */
 
       .readout {
@@ -440,17 +422,10 @@ const canonical = "https://kurikomi.com/";
 
 
       @media (min-width: 900px) {
-        .thesis { left: 3rem; bottom: 6rem; }
         .readout { right: 3rem; bottom: 6rem; }
       }
 
       @media (max-width: 640px) {
-        .thesis {
-          bottom: auto;
-          top: 5.5rem;
-          right: 1.5rem;
-          max-width: none;
-        }
         .readout {
           width: auto;
           left: 1.5rem;
@@ -464,7 +439,6 @@ const canonical = "https://kurikomi.com/";
 
       @media (max-height: 480px) {
         .tag { display: none; }
-        .thesis { bottom: 3.5rem; }
         .readout { bottom: 3.5rem; }
       }
 
@@ -552,6 +526,8 @@ const canonical = "https://kurikomi.com/";
     </style>
   </head>
   <body>
+    <h1 class="sr-only">Kurikomi</h1>
+
     <div class="stage" id="stage">
       <canvas id="stars" aria-hidden="true"></canvas>
       <svg id="rings" aria-hidden="true"></svg>
@@ -563,12 +539,7 @@ const canonical = "https://kurikomi.com/";
       <div id="bodies"></div>
 
 
-      <div class="thesis reveal r-1">
-        <h1>We build one thing at a time.</h1>
-        <p>One orbit is occupied. Eleven are not.</p>
-      </div>
-
-      <div class="readout reveal r-2" id="readout" data-live="true">
+      <div class="readout reveal r-1" id="readout" data-live="true">
         <p class="readout-label" id="ro-label">Hoaka OS</p>
         <a class="readout-link" id="ro-link" href="https://hoakaos.com"
           >hoakaos.com <span aria-hidden="true">&rarr;</span></a
@@ -578,8 +549,7 @@ const canonical = "https://kurikomi.com/";
     </div>
 
     <main class="page">
-      <section aria-labelledby="orbit">
-        <p id="orbit" class="label">In orbit</p>
+      <section>
         <p>
           <a href="https://hoakaos.com">Hoaka OS</a> is an operating system for
           university computer labs. Every machine boots from the same clean
