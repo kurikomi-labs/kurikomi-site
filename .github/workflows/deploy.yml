@@ -32,4 +32,7 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          # Pinned: the action otherwise npx-installs a floating wrangler,
+          # which npx refuses to fetch non-interactively.
+          wranglerVersion: "4.84.1"
           command: pages deploy dist --project-name=kurikomi-site --branch=main
